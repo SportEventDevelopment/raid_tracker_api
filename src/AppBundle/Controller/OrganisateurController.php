@@ -3,21 +3,22 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
+use AppBundle\Form\OrganisateurType;
 use AppBundle\Entity\Organisateur;
 
 class OrganisateurController extends Controller
 {
 
     /**
-     * @Route("/api/organisateurs", name="get_all_organisateurs")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/organisateurs", name="get_all_organisateurs")
      */
-    public function getOrganisateursAction(Request $request)
+    public function getOrganisateurs(Request $request)
     {
         $organisateurs = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Organisateur')
@@ -28,136 +29,105 @@ class OrganisateurController extends Controller
             return new JsonResponse(['message' => "Aucun organisateurs présents dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [];
-        foreach ($organisateurs as $organisateur) {
-            $formatted[] = [
-                'id' => $organisateur->getId(),
-                'idUser' => $organisateur->getIdUser(),
-                'idRaid' => $organisateur->getIdRaid()   
-            ];
-        }
-
-        return new JsonResponse($formatted, Response::HTTP_OK);
+        return $organisateurs;
     }
 
     /**
-     * @Route("/api/organisateurs", name="delete_all_organisateurs")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/organisateurs", name="delete_all_organisateurs")
      */
-    public function deleteOrganisateursAction(Request $request)
+    public function deleteOrganisateurs(Request $request)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $organisateurs = $em->getRepository('AppBundle:Organisateur')->findAll();
 
-        foreach ($organisateurs as $organisateur) {
-            $em->remove($organisateur);
+        if($organisateurs) {
+            foreach ($organisateurs as $organisateur) {
+                $em->remove($organisateur);
+            }
+    
+            $em->flush();
         }
-
-        $em->flush();
-
-        return new JsonResponse(["message" => "Les organisateurs ont été supprimés avec succès !"], Response::HTTP_OK);
     }
 
     /**
-     * @Route("/api/organisateurs/{id_organisateur}", name="get_organisateurs_one")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/organisateurs/{id_organisateur}", name="get_organisateurs_one")
      */
-    public function getOrganisateurAction(Request $request)
+    public function getOneOrganisateur(Request $request)
     {
-        $organisateur = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Organisateur')
-                ->find($request->get('id_organisateur'));
+        $em = $this->get('doctrine.orm.entity_manager');
+        $organisateur = $em->getRepository('AppBundle:Organisateur')
+                        ->find($request->get('id_organisateur'));
         /* @var $organisateur organisateur */
 
         if(empty($organisateur)){
-            return new JsonResponse(["message" => "Organisateur non trouvé !", Response::HTTP_NOT_FOUND]);
+            return new JsonResponse(["message" => "Organisateur non trouvé !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [
-            'id' => $organisateur->getId(),
-            'idUser' => $organisateur->getIdUser(),
-            'idRaid' => $organisateur->getIdRaid()
-        ];
-
-        return new JsonResponse($formatted, Response::HTTP_OK);
+       return $organisateur;
     }
 
 
     /**
-     * @Route("/api/organisateurs/{id_organisateur}", name="delete_organisateurs_one")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/organisateurs/{id_organisateur}", name="delete_organisateurs_one")
      */
-    public function deleteOrganisateurAction(Request $request)
+    public function deleteOneOrganisateur(Request $request)
     {
         
-        $sn = $this->getDoctrine()->getManager();
-        $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')->find($request->get('id_organisateur'));
+        $em = $this->get('doctrine.orm.entity_manager');
+        $organisateur = $em->getRepository('AppBundle:Organisateur')
+                        ->find($request->get('id_organisateur'));
        
-        if (empty($organisateur)) {
-            return new JsonResponse(["message" => "Organisateur non trouvé !"], Response::HTTP_NOT_FOUND);
+        if ($organisateur){
+            $em->remove($organisateur);
+            $em->flush();
         }
-
-        $sn->remove($organisateur);
-        $sn->flush();
-        
-        return new JsonResponse(["message" => "Organisateur supprime avec succès !"], Response::HTTP_OK); 
     }
 
    /**
-     * @Route("/api/organisateurs/raids/{id_raid}", name="get_all_organisateurs_one_raid")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/organisateurs/raids/{id_raid}", name="get_all_organisateurs_one_raid")
      */
-    public function getOrganisateursByIdRaidAction(Request $request)
+    public function getOrganisateursByIdRaid(Request $request)
     {
-        $organisateurs = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Organisateur')
-                ->findBy(array("idRaid" => $request->get('id_raid')));   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $organisateurs = $em->getRepository('AppBundle:Organisateur')
+                        ->findBy(array("idRaid" => $request->get('id_raid')));   
         /* @var $organisateurs Organisateurs[] */
         
         if (empty($organisateurs)) {
             return new JsonResponse(["message" => "Aucun organisateur pour ce raid !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [];
-        foreach ($organisateurs as $organisateur) {
-            $formatted[] = [
-                'id' => $organisateur->getId(),
-                'idUser' => $organisateur->getIdUser(),
-                'idRaid' => $organisateur->getIdRaid()   
-            ];
-        }
-
-        return new JsonResponse($formatted, Response::HTTP_OK);
+       return $organisateurs;
     }
 
     /**
-     * @Route("/api/organisateurs/raids/{id_raid}", name="delete_all_organisateurs_one_raid")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/organisateurs/raids/{id_raid}", name="delete_all_organisateurs_one_raid")
      */
-    public function deleteOrganisateursByIdRaidAction(Request $request)
+    public function deleteOrganisateursByIdRaid(Request $request)
     {
         
-        $sn = $this->getDoctrine()->getManager();
-        $organisateurs = $this->getDoctrine()->getRepository('AppBundle:Organisateur')
+        $em = $this->get('doctrine.orm.entity_manager');
+        $organisateurs = $em->getRepository('AppBundle:Organisateur')
                         ->findBy(array("idRaid" => $request->get('id_raid')));
        
-        if (empty($organisateurs)) {
-            return new JsonResponse(['message' => "Aucun organisateur dans ce raid !"], Response::HTTP_NOT_FOUND);
+        if ($organisateurs) {
+            foreach ($organisateurs as $organisateur) {
+                $em->remove($organisateur);
+            }
+            $em->flush();
         }
-
-        foreach ($organisateurs as $organisateur) {
-            $sn->remove($organisateur);
-        }
-        $sn->flush();
-        
-        return new JsonResponse(["message" => "Organisateurs supprimes avec succès !"], Response::HTTP_OK); 
     }
 
     /**
-     * @Route("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="get_raid_if_user_is_organisateur")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="get_organisateur_one_raid")
      */
-    public function getIsOrganisateurByUserId(Request $request)
+    public function getOrganisateurByRaidIdAndByUserId(Request $request)
     {
         $organisateur = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Organisateur')
@@ -166,63 +136,59 @@ class OrganisateurController extends Controller
                     'idUser' => $request->get('id_user'))
                 );
 
-        if(empty($organisateur)){
-            return new JsonResponse(["message" => "L'utilisateur n'appartient pas à l'équipe d'organisation"], Response::HTTP_NOT_FOUND);
+        if(empty($organisateur)) {
+            return New JsonResponse(['message' => "L'utilisateur recherché n'est pas organisateur de ce raid"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [
-            'id' => $organisateur->getId(),
-            'idRaid' => $organisateur->getIdRaid(),
-            'idUser' => $organisateur->getIdUser()
-        ];
-
-        return new JsonResponse($formatted,Response::HTTP_OK);
+        return $organisateur;
     }
 
-
     /**
-     *  @Route("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="post_organisateur_one_raid")
-     *  @Method({"POST"})
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("api/organisateurs/raids/{id_raid}/users/{id_user}", name="post_organisateur_one_raid")
      */
     public function postOrganisateurByIdRaidAndByIdUser(Request $request)
     {
-        $organisateur = new Organisateur();
-
-        $organisateur->setIdUser($request->get('id_user'));
-        $organisateur->setIdRaid($request->get('id_raid'));
+        $em = $this->get('doctrine.orm.entity_manager');
+        $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')
+                ->findOneBy(array(  
+                    'idRaid' => $request->get('id_raid'), 
+                    'idUser' => $request->get('id_user'))
+                );
 
         if(empty($organisateur)){
-            return new JsonResponse(["message" => "Champs vide, création refusée !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "L'utilisateur recherché n'est pas organisateur de ce raid !"], Response::HTTP_NOT_FOUND);
         }
-        // Save
-        $em = $this->get('doctrine.orm.entity_manager');
-        $em->persist($organisateur);
-        $em->flush();
 
-        return new JsonResponse(["message" => "Nouvel organisateur ajouté !"], Response::HTTP_OK);
+        $form = $this->createForm(OrganisateurType::class, $organisateur);
+
+        $form->submit($request->request->all());
+
+        if ($form->isValid()) {
+            $em->merge($organisateur);
+            $em->flush();
+            return $organisateur;
+        } else {
+            return $form;
+        }
     }
 
     /**
-     * @Route("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="delete_organisateur_one_raid")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="delete_organisateur_one_raid")
      */
     public function deleteOrganisateurByIdRaidAndByIdUser(Request $request)
     {
-        
-        $sn = $this->getDoctrine()->getManager();
+        $em = $this->get('doctrine.orm.entity_manager');
         $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')
                         ->findOneBy(array(
-                            "idUser" => $request->get('id_user'),
-                            "idRaid" => $request->get('id_raid')
+                            "idRaid" => $request->get('id_raid'),
+                            "idUser" => $request->get('id_user')
                         ));
        
-        if (empty($organisateur)) {
-            return new JsonResponse(['message' => "L'organisateur non trouve dans ce raid !"], Response::HTTP_NOT_FOUND);
+        if ($organisateur) {
+            $em->remove($organisateur);
+            $em->flush();
         }
-
-        $sn->remove($organisateur);
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Organisateur supprime avec succes !"], Response::HTTP_OK); 
     }
 }

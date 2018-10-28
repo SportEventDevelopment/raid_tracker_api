@@ -130,7 +130,6 @@ class UserController extends Controller
      */
     public function deleteOneUser(Request $request)
     {
-        
         $em = $this->get('doctrine.orm.entity_manager');
         $user = $em->getRepository('AppBundle:User')
                 ->find($request->get('id_user'));
