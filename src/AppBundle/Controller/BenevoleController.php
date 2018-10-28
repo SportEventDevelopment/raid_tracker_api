@@ -1,21 +1,22 @@
 <?php
 namespace AppBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\View;
+use AppBundle\Form\BenevoleType;
 use AppBundle\Entity\Benevole;
 
 class BenevoleController extends Controller
 {
     /**
-     * @Route("/api/benevoles", name="benevoles")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/benevoles", name="benevoles")
      */
-    public function getBenevolesAction(Request $request)
+    public function getBenevoles(Request $request)
     {
         $benevoles = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Benevole')
@@ -26,41 +27,31 @@ class BenevoleController extends Controller
             return new JsonResponse(['message' => "Aucun benevoles présents dans la BDD !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [];
-        foreach ($benevoles as $benevole) {
-            $formatted[] = [
-                'id' => $benevole->getId(),
-                'idUser' => $benevole->getIdUser(),
-                'idRaid' => $benevole->getIdRaid()    
-            ];
-        }
-
-        return new JsonResponse($formatted, Response::HTTP_OK);
+        return $benevoles;
     }
 
     /**
-     * @Route("/api/benevoles", name="delete_all_benevoles")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/benevoles", name="delete_all_benevoles")
      */
-    public function deleteBenevolesAction(Request $request)
+    public function deleteBenevoles(Request $request)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $benevoles = $em->getRepository('AppBundle:Benevole')->findAll();
 
-        foreach ($benevoles as $benevole) {
-            $em->remove($benevole);
+        if($benevoles) {
+            foreach ($benevoles as $benevole) {
+                $em->remove($benevole);
+            }
+            $em->flush();
         }
-
-        $em->flush();
-
-        return new JsonResponse(["message" => "Les benevoles ont ete supprimes avec succes !"], Response::HTTP_OK);
     }
 
     /**
-     * @Route("/api/benevoles/{id_benevole}", name="benevoles_one")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/benevoles/{id_benevole}", name="benevoles_one")
      */
-    public function getBenevoleAction(Request $request)
+    public function getBenevole(Request $request)
     {
         $benevole = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Benevole')
@@ -71,95 +62,66 @@ class BenevoleController extends Controller
             return new JsonResponse(['message' => "Le bénévole recherché n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [
-            'id' => $benevole->getId(),
-            'idUser' => $benevole->getIdUser(),
-            'idRaid' => $benevole->getIdRaid()
-        ];
-        return new JsonResponse($formatted);
+        return $benevole;
     }
 
 
     /**
-     * @Route("/api/benevoles/{id_benevole}", name="delete_benevoles_one")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/benevoles/{id_benevole}", name="delete_benevoles_one")
      */
-    public function deleteBenevoleAction(Request $request)
+    public function deleteBenevole(Request $request)
     {
-        $sn = $this->getDoctrine()->getManager();
-        $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')->find($request->get('id_benevole'));
+        $em = $this->get('doctrine.orm.entity_manager');
+        $benevole = $em->getRepository('AppBundle:Benevole')->find($request->get('id_benevole'));
        
-        if (empty($benevole)) {
-            return new JsonResponse(['message' => "Le bénévole recherché n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
+        if ($benevole) {
+            $em->remove($benevole);
+            $em->flush();
         }
-
-        $sn->remove($benevole);
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé avec succès !"], Response::HTTP_OK); 
     }
 
-
     /**
-     * @Route("/api/benevoles/raids/{id_raid}", name="get_all_benevoles_raid")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/benevoles/raids/{id_raid}", name="get_all_benevoles_raid")
      */
-    public function getBenevolesByIdRaidAction(Request $request)
+    public function getBenevolesByIdRaid(Request $request)
     {
         $benevoles = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Benevole')
-                ->findBy(array(
-                    "idRaid" => $request->get('id_raid')));
+                ->findBy(array("idRaid" => $request->get('id_raid')));
         /* @var $benevole Benevole */
 
         if (empty($benevoles)) {
             return new JsonResponse(['message' => "Le raid ne contient pas encore de bénévoles !"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [];
-        foreach ($benevoles as $benevole) {
-            $formatted[] = [
-                'id' => $benevole->getId(),
-                'idUser' => $benevole->getIdUser(),
-                'idRaid' => $benevole->getIdRaid()
-            ];
-        }
-        
-        return new JsonResponse($formatted, Response::HTTP_OK);
+        return $benevoles;
     }
 
     /**
-     * @Route("/api/benevoles/raids/{id_raid}", name="delete_all_benevoles_raid")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/benevoles/raids/{id_raid}", name="delete_all_benevoles_raid")
      */
-    public function deleteBenevolesByIdRaidAction(Request $request)
+    public function deleteBenevolesByIdRaid(Request $request)
     {   
-        $sn = $this->getDoctrine()->getManager();
-        $benevoles = $this->getDoctrine()->getRepository('AppBundle:Benevole')
-                    ->findBy(array(
-                        "idRaid" => $request->get('id_raid')
-                    ));
-       
-        if (empty($benevoles)) {
-            return new JsonResponse(['message' => "Aucun bénévole à supprimer trouvé dans ce raid !"], Response::HTTP_NOT_FOUND);
-        }
+        $em = $this->get('doctrine.orm.entity_manager');
+        $benevoles = $em->getRepository('AppBundle:Benevole')
+                    ->findBy(array("idRaid" => $request->get('id_raid')));
 
-        foreach ($benevoles as $benevole) {
-            $sn->remove($benevole);
+        if ($benevoles) {
+            foreach ($benevoles as $benevole) {
+                $em->remove($benevole);
+            }
+            $em->flush();
         }
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Tous les bénévoles du raid ont été supprimés avec succes !"], Response::HTTP_OK); 
     }
 
-
-
-
     /**
-     * @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="get_raid_if_user_is_benevole")
-     * @Method({"GET"})
+     * @Rest\View()
+     * @Rest\Get("/api/benevoles/raids/{id_raid}/users/{id_user}", name="get_raid_if_user_is_benevole")
      */
-    public function getIsOrganisateurByUserId(Request $request)
+    public function getBenevolesByIdRaidAndByIdUser(Request $request)
     {
         $benevole = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Benevole')
@@ -172,59 +134,48 @@ class BenevoleController extends Controller
             return new JsonResponse(["message" => "L'utilisateur n'est pas bénévole du raid"], Response::HTTP_NOT_FOUND);
         }
 
-        $formatted = [
-            'id' => $benevole->getId(),
-            'idRaid' => $benevole->getIdRaid(),
-            'idUser' => $benevole->getIdUser()
-        ];
-
-        return new JsonResponse($formatted,Response::HTTP_OK);
+        return $benevole;
     }
 
 
     /**
-     *  @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="post_benevole_one_raid")
-     *  @Method({"POST"})
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("/api/benevoles/raids/{id_raid}/users/{id_user}", name="post_benevole_one_raid")
      */
     public function postBenevoleByIdRaidAndByIdUser(Request $request)
     {
         $benevole = new Benevole();
 
-        $benevole->setIdUser($request->get('id_user'));
-        $benevole->setIdRaid($request->get('id_raid'));
+        $form = $this->createForm(BenevoleType::class, $benevole);
 
-        if(empty($benevole)){
-            return new JsonResponse(["message" => "Champs vide, création refusée !"], Response::HTTP_NOT_FOUND);
+        $form->submit($request->request->all());
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($benevole);
+            $em->flush();
+            return $benevole;
+        } else {
+            return $form;
         }
-        // Save
-        $em = $this->get('doctrine.orm.entity_manager');
-        $em->persist($benevole);
-        $em->flush();
-
-        return new JsonResponse(['message' => 'Nouveau bénévole ajouté !'], Response::HTTP_OK);
     }
 
     /**
-     * @Route("/api/benevoles/raids/{id_raid}/users/{id_user}", name="delete_benevole_one_raid")
-     * @Method({"DELETE"})
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/benevoles/raids/{id_raid}/users/{id_user}", name="delete_benevole_one_raid")
      */
     public function deleteBenevoleByIdRaidAndByIdUser(Request $request)
     {
-        
-        $sn = $this->getDoctrine()->getManager();
-        $benevole = $this->getDoctrine()->getRepository('AppBundle:Benevole')
-                        ->findOneBy(array(
-                            "idUser" => $request->get('id_user'),
-                            "idRaid" => $request->get('id_raid')
-                        ));
+        $em = $this->get('doctrine.orm.entity_manager');
+        $benevole = $em->getRepository('AppBundle:Benevole')
+                    ->findOneBy(array(
+                        "idRaid" => $request->get('id_raid'),
+                        "idUser" => $request->get('id_user')
+                    ));
        
-        if (empty($benevole)) {
-            return new JsonResponse(['message' => "Le bénévole n'est pas dans ce raid !"], Response::HTTP_NOT_FOUND);
+        if ($benevole) {
+            $em->remove($benevole);
+            $em->flush();
         }
-
-        $sn->remove($benevole);
-        $sn->flush();
-        
-        return new JsonResponse(['message' => "Bénévole supprimé du raid avec succes !"], Response::HTTP_OK); 
     }
 }

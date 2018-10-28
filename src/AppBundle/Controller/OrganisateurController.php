@@ -149,23 +149,15 @@ class OrganisateurController extends Controller
      */
     public function postOrganisateurByIdRaidAndByIdUser(Request $request)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')
-                ->findOneBy(array(  
-                    'idRaid' => $request->get('id_raid'), 
-                    'idUser' => $request->get('id_user'))
-                );
-
-        if(empty($organisateur)){
-            return new JsonResponse(["message" => "L'utilisateur recherché n'est pas organisateur de ce raid !"], Response::HTTP_NOT_FOUND);
-        }
+        $organisateur = new Organisateur();
 
         $form = $this->createForm(OrganisateurType::class, $organisateur);
 
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-            $em->merge($organisateur);
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($organisateur);
             $em->flush();
             return $organisateur;
         } else {
