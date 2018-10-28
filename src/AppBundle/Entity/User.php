@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
@@ -11,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var int
@@ -35,19 +36,6 @@ class User
      * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
     private $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="role", type="string", length=255)
-     */
-    private $role;
-
-    /**
-     * @var string
-     * @Assert\Length(max=4096)
-     */
-    private $plainPassword;
 
     /**
      * @var string
@@ -116,54 +104,6 @@ class User
     }
 
     /**
-     * Set role
-     *
-     * @param string $role
-     *
-     * @return User
-     */
-    public function setRole($role)
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * Get role
-     *
-     * @return string
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * Set plainPassword
-     *
-     * @param string $plainPassword
-     *
-     * @return User
-     */
-    public function setPlainPassword($plainPassword)
-    {
-        $this->plainPassword = $plainPassword;
-
-        return $this;
-    }
-
-    /**
-     * Get plainPassword
-     *
-     * @return string
-     */
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
-    }
-
-    /**
      * Set password
      *
      * @param string $password
@@ -185,6 +125,28 @@ class User
     public function getPassword()
     {
         return $this->password;
+    }
+
+
+    /** Implements abstract method from UserInterface */
+    public function eraseCredentials()
+    {
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return null;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getUsername()
+    {
+        return null;
     }
 }
 

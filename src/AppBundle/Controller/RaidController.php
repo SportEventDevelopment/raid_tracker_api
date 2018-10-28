@@ -9,8 +9,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
-use AppBundle\Entity\Organisateur;
-use AppBundle\Entity\Parcours;
 
 class RaidController extends Controller
 {
