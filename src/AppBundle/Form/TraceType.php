@@ -6,7 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BenevoleType extends AbstractType
+use AppBundle\Form\ParcoursType;
+
+class TraceType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -14,15 +16,15 @@ class BenevoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('idUser')
-            ->add('idRaid');
+        ->add('idParcours')
+        ->add('isCalibre');
     }/**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Benevole',
+            'data_class' => 'AppBundle\Entity\Trace',
             "csrf_protection" => false
         ));
     }
@@ -32,7 +34,7 @@ class BenevoleType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_benevole';
+        return 'appbundle_trace';
     }
 
 

@@ -22,16 +22,17 @@ class Benevole
     private $id;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="idUser", type="integer")
+     * @var User
+     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $idUser;
 
     /**
-     * @var int
+     * @var Raid
      *
-     * @ORM\Column(name="idRaid", type="integer")
+     * @ORM\ManyToOne(targetEntity="Raid")
+     * @ORM\JoinColumn(name="raid_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $idRaid;
 

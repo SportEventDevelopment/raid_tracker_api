@@ -22,6 +22,9 @@ class RaidController extends Controller
                 ->getRepository('AppBundle:Raid')
                 ->findAll();
         /* @var $raids Raids[] */
+        if(empty($raids)){
+            return new JsonResponse(["message" => "Aucun RAID présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
 
         return $raids;
     }
@@ -92,7 +95,6 @@ class RaidController extends Controller
      */
     public function updateOneRaid(Request $request)
     {
-
         $em = $this->get('doctrine.orm.entity_manager');
         $raid = $this->getDoctrine()->getRepository('AppBundle:Raid')
                 ->find($request->get('id_raid'));

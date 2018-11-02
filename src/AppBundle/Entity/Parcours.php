@@ -22,16 +22,18 @@ class Parcours
     private $id;
 
     /**
-     * @var int
+     * @var Raid
      *
-     * @ORM\Column(name="idRaid", type="integer")
+     * @ORM\ManyToOne(targetEntity="Raid")
+     * @ORM\JoinColumn(name="raid_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $idRaid;
 
     /**
-     * @var int
+     * @var Parcours
      *
-     * @ORM\Column(name="idParcoursPere", type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Parcours")
+     * @ORM\JoinColumn(name="parcourspere_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     private $idParcoursPere;
 

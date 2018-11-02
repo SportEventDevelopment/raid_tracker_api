@@ -36,23 +36,19 @@ class UserController extends Controller
     public function postUsers(Request $request)
     {
         $user = new User();
-        
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['validation_groups'=>['Default', 'New']]);
 
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-
             $encoder = $this->get('security.password_encoder');
-            $password = $encoder->encodePassword($user, $request->get('plainPassword')['first']);
-            $user->setPassword($password);
+            $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($encoded);
 
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($user);
             $em->flush();
-            
             return $user;
-
         } else {
             return $form;
         }
@@ -102,21 +98,28 @@ class UserController extends Controller
      */
     public function updateOneUser(Request $request)
     {
-        $em = $this->get('doctrine.orm.entity_manager');
-        $user = $this->getDoctrine()->getRepository('AppBundle:User')
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
                 ->find($request->get('id_user'));
+        /* @var $user User */
 
-        if(empty($user)){
-            return new JsonResponse(["message" => "L'utilisateur à modifier n'a pas été trouvé !"], Response::HTTP_NOT_FOUND);
+        if (empty($user)) {
+            return \FOS\RestBundle\View\View::create(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
         $form = $this->createForm(UserType::class, $user);
+
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
-            $encoder = $this->get('security.password_encoder');
-            $password = $encoder->encodePassword($user, $request->get('password')['first']);
-            $user->setPassword($password);
+            // Si l'utilisateur veut changer son mot de passe
+            if (!empty($user->getPlainPassword())) {
+                $encoder = $this->get('security.password_encoder');
+                $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($encoded);
+            }
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->merge($user);
             $em->flush();
             return $user;
         } else {
