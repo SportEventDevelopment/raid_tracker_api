@@ -61,7 +61,7 @@ class AuthTokenUserController extends Controller
 
     /**
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @Rest\Delete("/api/auth-tokens/{id}")
+     * @Rest\Delete("/api/auth-tokens/{id}", name="delete_auth_token")
      */
     public function removeAuthTokenAction(Request $request)
     {
