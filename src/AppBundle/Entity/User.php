@@ -30,12 +30,12 @@ class User implements UserInterface
      */
     protected $username;
     
-     /**
+    /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
     protected $email;
 
-     /**
+    /**
      * @ORM\Column(type="string", length=255)
      */
     protected $password;
