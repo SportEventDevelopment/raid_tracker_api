@@ -9,10 +9,21 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Entity\User;
 use AppBundle\Form\UserType;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class UserController extends Controller
 {
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     resource=true,
+     *     description="Get all users",
+     *     statusCodes={
+     *         200="Returned when users are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no users are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/users", name="get_all_users")
      */
