@@ -9,11 +9,22 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use AppBundle\Form\CredentialsType;
 use AppBundle\Entity\AuthToken;
 use AppBundle\Entity\Credentials;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class AuthTokenUserController extends Controller
 {
     /**
-     * @Rest\View(statusCode=Response::HTTP_CREATED, serializerGroups={"auth-token"})
+     * @Doc\ApiDoc(
+     *     section="X-AUTH-TOKEN",
+     *     input="AppBundle\Form\CredentialsType",
+     *     output="AppBundle\Form\Credentials",
+     *     description="Create new token",
+     *     statusCodes={
+     *         200="New token created successfully",
+     *         400="Bad request"
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/auth-tokens", name="post_auth_token")
      */
     public function postAuthTokens(Request $request)
@@ -60,7 +71,15 @@ class AuthTokenUserController extends Controller
     }
 
     /**
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT, serializerGroups={"auth-token"})
+     * @Doc\ApiDoc(
+     *     section="X-AUTH-TOKEN",
+     *     description="Delete one token",
+     *     statusCodes={
+     *         202="Token have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/auth-tokens/{id}", name="delete_auth_token")
      */
     public function removeAuthTokenAction(Request $request)
@@ -79,6 +98,5 @@ class AuthTokenUserController extends Controller
             throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException();
         }
     }
-
 }
 

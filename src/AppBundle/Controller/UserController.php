@@ -16,7 +16,6 @@ class UserController extends Controller
     /**
      * @Doc\ApiDoc(
      *     section="USER",
-     *     resource=true,
      *     description="Get all users",
      *     statusCodes={
      *         200="Returned when users are found",
@@ -41,6 +40,16 @@ class UserController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     input="AppBundle\Form\UserType",
+     *     output="AppBundle\Form\User",
+     *     description="Create new user",
+     *     statusCodes={
+     *         202="User created successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/users", name="post_all_users")
      */
@@ -66,6 +75,14 @@ class UserController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     description="Delete all users",
+     *     statusCodes={
+     *         202="All users have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/users", name="delete_all_users")
      */
@@ -85,6 +102,15 @@ class UserController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     description="Get one user",
+     *     statusCodes={
+     *         200="Returned when users are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no users are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/users/{id_user}", name="get_users_one")
      */
@@ -104,6 +130,17 @@ class UserController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     input="AppBundle\Form\UserType",
+     *     output="AppBundle\Form\User",
+     *     description="Update one user",
+     *     statusCodes={
+     *         200="Returned when user have been modified",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no users are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/users/{id_user}", name="post_users_one")
      */
@@ -139,6 +176,14 @@ class UserController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     description="Delete one user",
+     *     statusCodes={
+     *         202="Returned when user is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/users/{id_user}", name="delete_users_one")
      */

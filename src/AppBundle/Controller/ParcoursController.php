@@ -10,10 +10,20 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\ParcoursType;
 use AppBundle\Entity\Parcours;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class ParcoursController extends Controller
 {
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Get all parcours",
+     *     statusCodes={
+     *         200="Returned when parcours are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no parcours are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/parcours", name="get_all_parcours")
      */
@@ -31,6 +41,16 @@ class ParcoursController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     input="AppBundle\Form\ParcoursType",
+     *     output="AppBundle\Form\Parcours",
+     *     description="Create new parcours",
+     *     statusCodes={
+     *         202="Parcours created successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/parcours", name="post_all_parcours")
      */
@@ -63,6 +83,14 @@ class ParcoursController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Delete all parcourss",
+     *     statusCodes={
+     *         202="All parcourss have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/parcours", name="delete_all_parcours")
      */
@@ -80,6 +108,15 @@ class ParcoursController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Get one parcours",
+     *     statusCodes={
+     *         200="Returned when parcourss are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no parcourss are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/parcours/{id_parcours}", name="get_parcours_one")
      */
@@ -99,6 +136,17 @@ class ParcoursController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     input="AppBundle\Form\UserType",
+     *     output="AppBundle\Form\User",
+     *     description="Update one parcours",
+     *     statusCodes={
+     *         200="Returned when parcourss are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no parcourss are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/parcours/{id_parcours}", name="post_parcours_one")
      */
@@ -124,6 +172,14 @@ class ParcoursController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Delete one parcours",
+     *     statusCodes={
+     *         202="Returned when parcours is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/parcours/{id_parcours}", name="delete_parcours_one")
      */
@@ -140,6 +196,15 @@ class ParcoursController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Get all parcours of a specific raid",
+     *     statusCodes={
+     *         200="Returned when parcours are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no parcours are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/parcours/raids/{id_raid}", name="get_parcours_one_raid")
      */
@@ -158,6 +223,14 @@ class ParcoursController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="PARCOURS",
+     *     description="Delete all parcours of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all parcours successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/parcours/raids/{id_raid}", name="delete_parcours_one_raid")
      */
