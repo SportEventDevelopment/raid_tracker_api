@@ -10,10 +10,20 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\TraceType;
 use AppBundle\Entity\Trace;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class TraceController extends Controller
 {
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Get all traces",
+     *     statusCodes={
+     *         200="Returned when traces are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no traces are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/traces", name="get_all_trace")
      */
@@ -31,6 +41,16 @@ class TraceController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     input="AppBundle\Form\TraceType",
+     *     output="AppBundle\Form\Trace",
+     *     description="Create new trace",
+     *     statusCodes={
+     *         202="Trace created successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/traces", name="post_all_trace")
      */
@@ -63,6 +83,14 @@ class TraceController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Delete all traces",
+     *     statusCodes={
+     *         202="All traces have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/traces", name="delete_all_trace")
      */
@@ -81,6 +109,15 @@ class TraceController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Get one trace",
+     *     statusCodes={
+     *         200="Returned when trace is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no traces are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/traces/{id_trace}", name="get_trace_one")
      */
@@ -100,6 +137,17 @@ class TraceController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     input="AppBundle\Form\TraceType",
+     *     output="AppBundle\Form\Trace",
+     *     description="Update one trace",
+     *     statusCodes={
+     *         200="Returned when trace have been modified",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no traces are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/traces/{id_trace}", name="post_trace_one")
      */
@@ -132,6 +180,14 @@ class TraceController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Delete one trace",
+     *     statusCodes={
+     *         202="Returned when trace is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/traces/{id_trace}", name="delete_trace_one")
      */
@@ -146,5 +202,4 @@ class TraceController extends Controller
             $em->flush();
         }
     }
-
 }

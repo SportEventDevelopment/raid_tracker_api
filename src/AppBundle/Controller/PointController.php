@@ -10,10 +10,20 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\PointType;
 use AppBundle\Entity\Point;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class PointController extends Controller
 {
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get all points",
+     *     statusCodes={
+     *         200="Returned when points are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points", name="get_all_point")
      */
@@ -31,6 +41,16 @@ class PointController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     input="AppBundle\Form\PointType",
+     *     output="AppBundle\Form\Point",
+     *     description="Create new point",
+     *     statusCodes={
+     *         202="Point created successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/points", name="post_all_point")
      */
@@ -63,6 +83,14 @@ class PointController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete all points",
+     *     statusCodes={
+     *         202="All points have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points", name="delete_all_point")
      */
@@ -81,6 +109,15 @@ class PointController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get one point",
+     *     statusCodes={
+     *         200="Returned when point is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points/{id_point}", name="get_point_one")
      */
@@ -100,6 +137,17 @@ class PointController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     input="AppBundle\Form\PointType",
+     *     output="AppBundle\Form\Point",
+     *     description="Update one point",
+     *     statusCodes={
+     *         200="Returned when point have been modified",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/points/{id_point}", name="post_point_one")
      */
@@ -132,6 +180,14 @@ class PointController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete one point",
+     *     statusCodes={
+     *         202="Returned when point is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/{id_point}", name="delete_point_one")
      */
@@ -148,6 +204,15 @@ class PointController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get all points of one trace",
+     *     statusCodes={
+     *         200="Returned when points are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points/traces/{id_trace}", name="get_point_one_trace")
      */
@@ -173,6 +238,14 @@ class PointController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete all points of a specific trace",
+     *     statusCodes={
+     *         202="Remove all points successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/traces/{id_trace}", name="delete_point_one_trace")
      */
@@ -199,6 +272,15 @@ class PointController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get departure point of one trace",
+     *     statusCodes={
+     *         200="Returned when departure point is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points/traces/{id_trace}/depart", name="get_point_one_trace_depart")
      */
@@ -228,6 +310,14 @@ class PointController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete departure point of a specific trace",
+     *     statusCodes={
+     *         202="Remove departure point successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/traces/{id_trace}/depart", name="delete_point_one_trace_depart")
      */
@@ -256,6 +346,15 @@ class PointController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get arrival point of one trace",
+     *     statusCodes={
+     *         200="Returned when arrival point is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points/traces/{id_trace}/arrivee", name="get_point_one_trace_arrivee")
      */
@@ -284,7 +383,15 @@ class PointController extends Controller
         return $point;
     }
 
-    /**
+    /**     
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete arrival point of a specific trace",
+     *     statusCodes={
+     *         202="Remove arrival point successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/traces/{id_trace}/arrivee", name="delete_point_one_trace_arrivee")
      */
@@ -314,6 +421,15 @@ class PointController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Get poste point of one trace",
+     *     statusCodes={
+     *         200="Returned when poste point is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/points/postes/{id_poste}", name="get_one_poste")
      */
@@ -340,6 +456,14 @@ class PointController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete poste point",
+     *     statusCodes={
+     *         202="Remove poste point successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/postes/{id_poste}", name="delete_one_poste")
      */
