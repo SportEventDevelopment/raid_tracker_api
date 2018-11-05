@@ -10,11 +10,21 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\OrganisateurType;
 use AppBundle\Entity\Organisateur;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class OrganisateurController extends Controller
 {
 
     /**
+     * @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     description="Get all organisateurs",
+     *     statusCodes={
+     *         200="Returned when organisateurs are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no organisateurs are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/organisateurs", name="get_all_organisateurs")
      */
@@ -33,6 +43,16 @@ class OrganisateurController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     input="AppBundle\Form\OrganisateurType",
+     *     output="AppBundle\Form\Organisateur",
+     *     description="Delete all organisateurs",
+     *     statusCodes={
+     *         202="Remove all organisateurs successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/organisateurs", name="delete_all_organisateurs")
      */
@@ -51,6 +71,15 @@ class OrganisateurController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     description="Get one organisateur",
+     *     statusCodes={
+     *         200="Returned when organisateurs are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no organisateurs are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/organisateurs/{id_organisateur}", name="get_organisateurs_one")
      */
@@ -70,6 +99,14 @@ class OrganisateurController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     description="Delete one organisateur",
+     *     statusCodes={
+     *         202="Returned when organisateur is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/organisateurs/{id_organisateur}", name="delete_organisateurs_one")
      */
@@ -87,6 +124,15 @@ class OrganisateurController extends Controller
     }
 
    /**
+     * @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     description="Get organisateurs of one raid",
+     *     statusCodes={
+     *         200="Returned when organisateurs are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no organisateurs are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/organisateurs/raids/{id_raid}", name="get_all_organisateurs_one_raid")
      */
@@ -105,12 +151,21 @@ class OrganisateurController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     input="AppBundle\Form\OrganisateurType",
+     *     output="AppBundle\Form\Organisateur",
+     *     description="Delete all organisateurs of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all organisateurs successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/organisateurs/raids/{id_raid}", name="delete_all_organisateurs_one_raid")
      */
     public function deleteOrganisateursByIdRaid(Request $request)
     {
-        
         $em = $this->get('doctrine.orm.entity_manager');
         $organisateurs = $em->getRepository('AppBundle:Organisateur')
                         ->findBy(array("idRaid" => $request->get('id_raid')));
@@ -124,6 +179,15 @@ class OrganisateurController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     description="Get organisateur if present in a specific RAID",
+     *     statusCodes={
+     *         200="Returned when organisateur is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no organisateurs are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="get_organisateur_one_raid")
      */
@@ -144,11 +208,39 @@ class OrganisateurController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     input="AppBundle\Form\OrganisateurType",
+     *     output="AppBundle\Form\Organisateur",
+     *     description="Add organisateur in a RAID",
+     *     statusCodes={
+     *         200="Returned when organisateur has been added successfully",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no organisateurs are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("api/organisateurs/raids/{id_raid}/users/{id_user}", name="post_organisateur_one_raid")
      */
     public function postOrganisateurByIdRaidAndByIdUser(Request $request)
     {
+
+        $raid = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Raid')
+                ->find($request->get('id_raid'));
+        
+        if(empty($raid)){
+            return new JsonResponse(['message' => "Le raid selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+ 
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
+                ->find($request->get('id_user'));
+        
+        if(empty($user)){
+            return new JsonResponse(['message' => "L'utilisateur selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+        
         $organisateur = new Organisateur();
 
         $form = $this->createForm(OrganisateurType::class, $organisateur);
@@ -166,6 +258,16 @@ class OrganisateurController extends Controller
     }
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="ORGANISATEUR",
+     *     input="AppBundle\Form\OrganisateurType",
+     *     output="AppBundle\Form\Organisateur",
+     *     description="Delete organisateur of a specific RAID",
+     *     statusCodes={
+     *         202="Remove organisateur if present successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/organisateurs/raids/{id_raid}/users/{id_user}", name="delete_organisateur_one_raid")
      */

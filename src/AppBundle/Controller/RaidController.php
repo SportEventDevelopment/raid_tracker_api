@@ -9,10 +9,20 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use AppBundle\Form\RaidType;
 use AppBundle\Entity\Raid;
+use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class RaidController extends Controller
 {
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Get all raids",
+     *     statusCodes={
+     *         200="Returned when raids are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/raids", name="get_all_raids")
      */
@@ -22,11 +32,24 @@ class RaidController extends Controller
                 ->getRepository('AppBundle:Raid')
                 ->findAll();
         /* @var $raids Raids[] */
+        if(empty($raids)){
+            return new JsonResponse(["message" => "Aucun RAID présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
 
         return $raids;
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     input="AppBundle\Form\RaidType",
+     *     output="AppBundle\Form\Raid",
+     *     description="Create new raid",
+     *     statusCodes={
+     *         202="Raid created successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/raids", name="post_all_raids")
      */
@@ -51,6 +74,14 @@ class RaidController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete all raids",
+     *     statusCodes={
+     *         202="All raids have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/raids", name="delete_all_raids")
      */
@@ -69,6 +100,15 @@ class RaidController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Get one raid",
+     *     statusCodes={
+     *         200="Returned when raid is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/raids/{id_raid}", name="get_raids_one")
      */
@@ -87,12 +127,22 @@ class RaidController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     input="AppBundle\Form\RaidType",
+     *     output="AppBundle\Form\Raid",
+     *     description="Update one raid",
+     *     statusCodes={
+     *         200="Returned when raid have been modified",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/api/raids/{id_raid}", name="post_raids_one")
      */
     public function updateOneRaid(Request $request)
     {
-
         $em = $this->get('doctrine.orm.entity_manager');
         $raid = $this->getDoctrine()->getRepository('AppBundle:Raid')
                 ->find($request->get('id_raid'));
@@ -115,6 +165,14 @@ class RaidController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete one raid",
+     *     statusCodes={
+     *         202="Returned when raid is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/raids/{id_raid}", name="delete_raids_one")
      */
@@ -132,6 +190,15 @@ class RaidController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Get all raids benevoles of one user",
+     *     statusCodes={
+     *         200="Returned when raids are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/raids/benevoles/users/{id_user}", name="get_all_raids_benevoles")
      */
@@ -151,6 +218,14 @@ class RaidController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete all raids benevoles of a specific user",
+     *     statusCodes={
+     *         202="Remove all raids successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/raids/benevoles/users/{id_user}", name="delete_all_raids_benevoles")
      */
@@ -169,6 +244,15 @@ class RaidController extends Controller
     }
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Get all raids organisateurs of one user",
+     *     statusCodes={
+     *         200="Returned when raids are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/raids/organisateurs/users/{id_user}", name="get_all_raids_organisateurs")
      */
@@ -188,6 +272,14 @@ class RaidController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete all raids organisateurs of a specific user",
+     *     statusCodes={
+     *         202="Remove all raids successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/raids/organisateurs/users/{id_user}", name="delete_all_raids_organisateurs")
      */
@@ -207,6 +299,15 @@ class RaidController extends Controller
 
 
     /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Get all raids organisateurs of a parcours",
+     *     statusCodes={
+     *         200="Returned when raids are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
      * @Rest\View()
      * @Rest\Get("/api/raids/parcours/{id_parcours}", name="get_all_raids_parcours")
      */
@@ -226,6 +327,14 @@ class RaidController extends Controller
 
 
     /**
+     *  @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete all raids of a specific parcours",
+     *     statusCodes={
+     *         202="Remove all raids successfully",
+     *         400="Bad request",
+     *     }
+     * )
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/raids/parcours/{id_parcours}", name="delete_all_raids_parcours")
      */

@@ -19,16 +19,12 @@ class RaidType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class)
-
             ->add('lieu', TextType::class)
-    
             ->add('date', DateTimeType::class, array(
                 'widget' => 'single_text',
                 'format' => 'yyyy/MM/dd HH:mm',
             ))
-    
             ->add('edition', IntegerType::class)
-    
             ->add('equipe', TextType::class);
     }
     

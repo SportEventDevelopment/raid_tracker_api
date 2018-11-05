@@ -23,120 +23,66 @@ class User implements UserInterface
      */
     private $id;
 
+    
     /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank()
+     * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    protected $username;
+    
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     */
+    protected $email;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    protected $password;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\NotBlank()
      */
-    private $password;
+    protected $plainPassword;
 
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
     public function getId()
     {
         return $this->id;
     }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return User
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
+    
     public function getEmail()
     {
         return $this->email;
     }
 
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
+    public function setEmail($email)
     {
-        $this->password = $password;
-
-        return $this;
+        $this->email = $email;
     }
 
-    /**
-     * Get password
-     *
-     * @return string
-     */
     public function getPassword()
     {
         return $this->password;
     }
 
-
-    /** Implements abstract method from UserInterface */
-    public function eraseCredentials()
+    public function setPassword($password)
     {
-        return null;
+        $this->password = $password;
+    }
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
     }
 
     public function getRoles()
     {
-        return null;
+        return [];
     }
 
     public function getSalt()
@@ -144,9 +90,19 @@ class User implements UserInterface
         return null;
     }
 
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
+
     public function getUsername()
     {
-        return null;
+        return $this->username;
+    }
+
+    public function eraseCredentials()
+    {
+        $this->plainPassword = null;
     }
 }
 

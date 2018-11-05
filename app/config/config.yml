@@ -83,3 +83,12 @@ fos_rest:
             - { path: '^/', priorities: ['json'], fallback_format: 'json' }
     body_listener:
         enabled: true
+    exception:
+        enabled: true
+        messages:
+            'Symfony\Component\HttpKernel\Exception\HttpException' : true
+            'Symfony\Component\Security\Core\Exception\BadCredentialsException': true
+        codes:
+            'Symfony\Component\Security\Core\Exception\BadCredentialsException': 401
+
+nelmio_api_doc: ~
