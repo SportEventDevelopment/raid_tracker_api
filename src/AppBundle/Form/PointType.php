@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class PointType extends AbstractType
@@ -17,8 +18,8 @@ class PointType extends AbstractType
     {
         $builder
             ->add('idTrace')
-            ->add('lon', IntegerType::class)
-            ->add('lat', IntegerType::class)
+            ->add('lon', NumberType::class)
+            ->add('lat', NumberType::class)
             ->add('type', IntegerType::class);
     }/**
      * {@inheritdoc}
