@@ -32,14 +32,14 @@ class Point
     /**
      * @var float
      *
-     * @ORM\Column(name="lon", type="integer")
+     * @ORM\Column(name="lon", type="float")
      */
     private $lon;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="lat", type="integer")
+     * @ORM\Column(name="lat", type="float")
      */
     private $lat;
 
