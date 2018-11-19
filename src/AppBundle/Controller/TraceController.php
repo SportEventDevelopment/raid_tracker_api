@@ -202,4 +202,65 @@ class TraceController extends Controller
             $em->flush();
         }
     }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Get traces by id parcours",
+     *     statusCodes={
+     *         200="Returned when traces are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no traces are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/traces/parcours/{id_parcours}", name="get_traces_by_idparcours")
+     */
+    public function getTracesByIdParcours(Request $request)
+    {
+        $em =  $this->get('doctrine.orm.entity_manager');
+        $parcours = $em->getRepository('AppBundle:Parcours')
+                    ->find($request->get('id_parcours'));
+        /* @var $parcours Parcours */
+
+        if(empty($parcours)){
+            return new JsonResponse(["message" => "Parcours ". $request->get('id_parcours') ." non trouvé !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        $trace = $em->getRepository('AppBundle:Trace')
+                ->findTracesByIdParcours($request->get('id_parcours'));
+        /* @var $trace Trace */
+        
+        if(empty($trace)){
+            return new JsonResponse(["message" => "Aucun tracé pour le parcours ". $request->get('id_parcours')], Response::HTTP_NOT_FOUND);
+        }
+
+        return $trace;
+    }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="TRACE",
+     *     description="Delete all traces by idparcours",
+     *     statusCodes={
+     *         202="All traces have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/traces/parcours/{id_parcours}", name="delete_all_trace_by_idparcours")
+     */
+    public function deleteTracesByIdParcours(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $traces = $em->getRepository('AppBundle:Trace')
+                ->findTracesByIdParcours($request->get('id_parcours'));
+
+        if($traces) {
+            foreach ($traces as $trace) {
+                $em->remove($trace);
+            }
+            $em->flush();
+        }
+    }
 }
