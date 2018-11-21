@@ -46,7 +46,7 @@ class RaidController extends Controller
      *     output="AppBundle\Form\Raid",
      *     description="Create new raid",
      *     statusCodes={
-     *         202="Raid created successfully",
+     *         201="Raid created successfully",
      *         400="Bad request",
      *     }
      * )
