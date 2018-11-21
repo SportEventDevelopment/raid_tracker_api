@@ -8,10 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\CheckBoxType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 
-class RaidType extends AbstractType
+class PosteType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -19,25 +18,23 @@ class RaidType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom', TextType::class)
-            ->add('lieu', TextType::class)
-            ->add('date', DateTimeType::class, array(
-                'widget' => 'single_text',
-                'format' => 'yyyy/MM/dd HH:mm',
+            ->add('idPoint')
+            ->add('type', TextType::class)
+            ->add('nombre', IntegerType::class)
+            ->add('heureDebut', TimeType::class, array(
+                'widget' => 'single_text'
             ))
-            ->add('edition', IntegerType::class)
-            ->add('equipe', TextType::class)
-            ->add('visibility', CheckBoxType::class);
-    }
-    
-    /**
+            ->add('heureFin', TimeType::class, array(
+                'widget' => 'single_text' 
+            ));
+    }/**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Raid',
-            'csrf_protection' => false
+            'data_class' => 'AppBundle\Entity\Poste',
+            "csrf_protection" => false
         ));
     }
 
@@ -46,7 +43,7 @@ class RaidType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_raid';
+        return 'appbundle_poste';
     }
 
 

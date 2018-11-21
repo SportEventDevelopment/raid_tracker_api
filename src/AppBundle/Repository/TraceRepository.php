@@ -10,13 +10,14 @@ namespace AppBundle\Repository;
  */
 class TraceRepository extends \Doctrine\ORM\EntityRepository
 {
-    function findParcoursByIdTrace($id_trace){
+    function findTracesByIdParcours($id_parcours){
+
         $query = $this->getEntityManager()->createQuery(
-            'SELECT parcours FROM AppBundle:Trace t
+            'SELECT trace FROM AppBundle:Trace trace
             INNER JOIN AppBundle:Parcours parcours
-            WHERE parcours.id = t.idParcours  AND t.id = :idTrace'
-        )->setParameter('idTrace', $id_trace);
+            WHERE parcours.id = trace.idParcours AND parcours.id = :idParcours'
+        )->setParameter('idParcours', $id_parcours);
         
-        return $query->getOneOrNullResult();
+        return $query->getResult();
     }
 }

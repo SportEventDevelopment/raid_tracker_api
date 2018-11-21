@@ -56,6 +56,12 @@ class Raid
      */
     private $equipe;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="visibility", type="boolean")
+     */
+    private $visibility;
 
     /**
      * Get id
@@ -185,6 +191,30 @@ class Raid
     public function getEquipe()
     {
         return $this->equipe;
+    }
+
+    /**
+     * Set visibility
+     *
+     * @param string $visibility
+     *
+     * @return Raid
+     */
+    public function setVisibility($visibility)
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * Get visibility
+     *
+     * @return string
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
     }
 }
 
