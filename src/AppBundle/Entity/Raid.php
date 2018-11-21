@@ -196,7 +196,7 @@ class Raid
     /**
      * Set visibility
      *
-     * @param string $visibility
+     * @param boolean $visibility
      *
      * @return Raid
      */
@@ -210,7 +210,7 @@ class Raid
     /**
      * Get visibility
      *
-     * @return string
+     * @return boolean
      */
     public function getVisibility()
     {
