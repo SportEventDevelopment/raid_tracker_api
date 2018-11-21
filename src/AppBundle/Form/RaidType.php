@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\CheckBoxType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class RaidType extends AbstractType
 {
@@ -27,7 +27,7 @@ class RaidType extends AbstractType
             ))
             ->add('edition', IntegerType::class)
             ->add('equipe', TextType::class)
-            ->add('visibility', CheckBoxType::class);
+            ->add('visibility', CheckboxType::class);
     }
     
     /**
