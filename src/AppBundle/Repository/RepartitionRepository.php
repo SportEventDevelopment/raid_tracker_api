@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class RepartitionRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findRepartitionsByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r INNER JOIN AppBundle:Benevole b
+            WHERE r.idBenevole = b.id AND b.idRaid = :idRaid'
+        )->setParameter('idRaid', $id_raid);
+        
+        // var_dump($query);die;
+        return $query->getResult();
+    }
 }
