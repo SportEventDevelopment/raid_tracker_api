@@ -10,4 +10,23 @@ namespace AppBundle\Repository;
  */
 class PosteRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findPostesByIdBenevole($id_benevole){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT poste FROM AppBundle:Poste poste
+            INNER JOIN AppBundle:Repartition r
+            WHERE poste.id = r.idPoste AND r.idBenevole = :idBenevole'
+        )->setParameter('idBenevole', $id_benevole);
+        
+        return $query->getResult();
+    }
+
+    function findPostesByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT poste FROM AppBundle:Poste poste
+            INNER JOIN AppBundle:Repartition r
+            WHERE poste.id = r.idPoste AND r.idBenevole = :idBenevole'
+        )->setParameter('idBenevole', $id_raid);
+        
+        return $query->getResult();
+    }
 }

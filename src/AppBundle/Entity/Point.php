@@ -50,6 +50,13 @@ class Point
      */
     private $type;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="ordre", type="integer")
+     */
+    private $ordre;
+
 
     /**
      * Get id
@@ -155,6 +162,30 @@ class Point
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set ordre
+     *
+     * @param integer $ordre
+     *
+     * @return Point
+     */
+    public function setOrdre($ordre)
+    {
+        $this->ordre = $ordre;
+
+        return $this;
+    }
+
+    /**
+     * Get ordre
+     *
+     * @return int
+     */
+    public function getOrdre()
+    {
+        return $this->ordre;
     }
 }
 
