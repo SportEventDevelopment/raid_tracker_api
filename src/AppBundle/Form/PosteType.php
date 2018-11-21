@@ -22,14 +22,10 @@ class PosteType extends AbstractType
             ->add('type', TextType::class)
             ->add('nombre', IntegerType::class)
             ->add('heureDebut', TimeType::class, array(
-                'input'  => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'HH:mm'
+                'widget' => 'single_text'
             ))
             ->add('heureFin', TimeType::class, array(
-                'input'  => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'HH:mm'
+                'widget' => 'single_text' 
             ));
     }/**
      * {@inheritdoc}

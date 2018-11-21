@@ -20,7 +20,8 @@ class PointType extends AbstractType
             ->add('idTrace')
             ->add('lon', NumberType::class)
             ->add('lat', NumberType::class)
-            ->add('type', IntegerType::class);
+            ->add('type', IntegerType::class)
+            ->add('ordre', IntegerType::class);
     }/**
      * {@inheritdoc}
      */

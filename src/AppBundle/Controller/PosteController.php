@@ -14,7 +14,7 @@ use Nelmio\ApiDocBundle\Annotation as Doc;
 
 class PosteController extends Controller
 {
-     /**
+    /**
      * @Doc\ApiDoc(
      *     section="POSTE",
      *     description="Get all postes",
@@ -129,7 +129,7 @@ class PosteController extends Controller
         /* @var $poste Poste */
 
         if(empty($poste)){
-            return new JsonResponse(["message" => "Tracé ". $request->get('id_poste') ." non trouvé !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Poste ". $request->get('id_poste') ." non trouvé !"], Response::HTTP_NOT_FOUND);
         }
         
         return $poste;
@@ -158,14 +158,14 @@ class PosteController extends Controller
                 ->find($request->get('id_poste'));
 
         if(empty($poste)){
-            return new JsonResponse(["message" => "Tracé ". $request->get('id_poste') ." inexistant !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Poste ". $request->get('id_poste') ." inexistant !"], Response::HTTP_NOT_FOUND);
         }
 
-        $parcours = $this->getDoctrine()->getRepository('AppBundle:Parcours')
-                ->find($request->get('idParcours'));
+        $point = $this->getDoctrine()->getRepository('AppBundle:Point')
+                ->find($request->request->get('idPoint'));
 
-        if(empty($parcours)){
-            return new JsonResponse(["message" => "Le parcours renseigné n'est pas dans la bdd"], Response::HTTP_NOT_FOUND);
+        if(empty($point)){
+            return new JsonResponse(["message" => "Le point renseigné n'est pas dans la bdd"], Response::HTTP_NOT_FOUND);
         }
 
         $form = $this->createForm(PosteType::class, $poste);
@@ -202,4 +202,144 @@ class PosteController extends Controller
             $em->flush();
         }
     }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes by id benevole",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/benevoles/{id_benevole}", name="get_all_postes_by_idbenevole")
+     */
+    public function getPostesByIdBenevole(Request $request)
+    {
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findPostesByIdBenevole($request->get('id_benevole'));
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste affecté pour ce bénévole ! (id=". $request->get('id_benevole').")"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+    
+    // /api/postes/benevoles/{id_benevole}
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/raid/{id_raid}", name="get_all_poste_by_idraid")
+     */
+    public function getPostesByIdRaid(Request $request)
+    {
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findPostesByIdRaid($request->get('id_raid'));
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+    
+    // /api/postes/raid/{id_raid}
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/raid/{id_raid}/available", name="get_all_poste_available_by_idraid")
+     */
+    public function getPostesAvailableByIdRaid(Request $request)
+    {
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findAll();
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste affectés pour ce bénévole "], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+    
+    // /api/postes/raid/{id_raid}/available
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/parcours/{id_parcours}", name="get_all_poste_by_idparcours")
+     */
+    public function getPostesByIdParcours(Request $request)
+    {
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findAll();
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+    
+    // /api/postes/parcours/{id_parcours}
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/parcours/{id_parcours}/available", name="get_all_poste_available_by_idparcours")
+     */
+    public function getPostesAvailableByIdParcours(Request $request)
+    {
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findAll();
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+    
+    // /api/postes/parcours/{id_parcours}/available
 }

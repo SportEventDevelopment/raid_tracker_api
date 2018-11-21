@@ -44,16 +44,16 @@ class Poste
     private $nombre;
 
     /**
-     * @var \DateTime
+     * @var \Time
      *
-     * @ORM\Column(name="heureDebut", type="date")
+     * @ORM\Column(name="heureDebut", type="time")
      */
     private $heureDebut;
 
     /**
-     * @var \DateTime
+     * @var \Time
      *
-     * @ORM\Column(name="heureFin", type="date")
+     * @ORM\Column(name="heureFin", type="time")
      */
     private $heureFin;
 
@@ -143,7 +143,7 @@ class Poste
     /**
      * Set heureDebut
      *
-     * @param \DateTime $heureDebut
+     * @param \Time $heureDebut
      *
      * @return Poste
      */
@@ -157,7 +157,7 @@ class Poste
     /**
      * Get heureDebut
      *
-     * @return \DateTime
+     * @return \Time
      */
     public function getHeureDebut()
     {
@@ -167,7 +167,7 @@ class Poste
     /**
      * Set heureFin
      *
-     * @param \DateTime $heureFin
+     * @param \Time $heureFin
      *
      * @return Poste
      */
@@ -181,7 +181,7 @@ class Poste
     /**
      * Get heureFin
      *
-     * @return \DateTime
+     * @return \Time
      */
     public function getHeureFin()
     {
