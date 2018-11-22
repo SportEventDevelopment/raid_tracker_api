@@ -291,12 +291,12 @@ class RepartitionController extends Controller
     public function getRepartitionsByIdParcours(Request $request)
     {
         $repartitions = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Repartition')
-                ->findBy(array("idParcours" => $request->get('id_parcours')));
+                        ->getRepository('AppBundle:Repartition')
+                        ->findRepartitionsByIdParcours($request->get('id_parcours'));
         /* @var $benevole Benevole */
 
         if (empty($repartitions)) {
-            return new JsonResponse(['message' => "Le parcours ne contient pas encore de répartitions !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['message' => "Aucune répartition associée au parcours"], Response::HTTP_NOT_FOUND);
         }
 
         return $repartitions;
@@ -320,7 +320,7 @@ class RepartitionController extends Controller
     {   
         $em = $this->get('doctrine.orm.entity_manager');
         $repartitions = $em->getRepository('AppBundle:Repartition')
-                    ->findBy(array("idParcours" => $request->get('id_parcours')));
+                        ->findRepartitionsByIdParcours($request->get('id_parcours'));
 
         if ($repartitions) {
             foreach ($repartitions as $repartition) {
@@ -330,7 +330,7 @@ class RepartitionController extends Controller
         }
     }
 
-        /**
+    /**
      * @Doc\ApiDoc(
      *     section="REPARTITION",
      *     description="Get repartitions of one user",
@@ -346,8 +346,8 @@ class RepartitionController extends Controller
     public function getRepartitionsByIdUsers(Request $request)
     {
         $repartitions = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Repartition')
-                ->findBy(array("idUsers" => $request->get('id_user')));
+                        ->getRepository('AppBundle:Repartition')
+                        ->findRepartitionsByIdUser($request->get('id_user'));
         /* @var $benevole Benevole */
 
         if (empty($repartitions)) {
@@ -375,7 +375,7 @@ class RepartitionController extends Controller
     {   
         $em = $this->get('doctrine.orm.entity_manager');
         $repartitions = $em->getRepository('AppBundle:Repartition')
-                    ->findBy(array("idUser" => $request->get('id_user')));
+                        ->findRepartitionsByIdUser($request->get('id_user'));
 
         if ($repartitions) {
             foreach ($repartitions as $repartition) {

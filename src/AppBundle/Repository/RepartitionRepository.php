@@ -12,11 +12,36 @@ class RepartitionRepository extends \Doctrine\ORM\EntityRepository
 {
     function findRepartitionsByIdRaid($id_raid){
         $query = $this->getEntityManager()->createQuery(
-            'SELECT r FROM AppBundle:Repartition r INNER JOIN AppBundle:Benevole b
-            WHERE r.idBenevole = b.id AND b.idRaid = :idRaid'
+            'SELECT r FROM AppBundle:Repartition r 
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id 
+            WHERE b.idRaid = :idRaid'
         )->setParameter('idRaid', $id_raid);
         
-        // var_dump($query);die;
         return $query->getResult();
+    }
+
+    function findRepartitionsByIdParcours($id_parcours){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+            INNER JOIN AppBundle:Parcours parcours WITH b.idRaid = parcours.idRaid 
+            INNER JOIN AppBundle:Poste poste WITH r.idPoste = poste.id 
+            INNER JOIN AppBundle:Point point WITH poste.idPoint = point.id 
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id
+            WHERE trace.idParcours = parcours.id AND parcours.id = :idParcours '
+        )->setParameter('idParcours', $id_parcours);
+        
+        return $query->getResult();        
+    }
+
+    function findRepartitionsByIdUser($id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+            INNER JOIN AppBundle:User u WITH b.idUser = u.id
+            WHERE u.id = :idUser '
+        )->setParameter('idUser', $id_user);
+        
+        return $query->getResult();        
     }
 }
