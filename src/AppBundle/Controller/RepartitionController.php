@@ -72,6 +72,14 @@ class RepartitionController extends Controller
             return new JsonResponse(['message' => 'Le bénévole ne peut pas être affecté au poste car le bénévole est inexistant'], Response::HTTP_NOT_FOUND);
         }
 
+        $valid =  $this->get('doctrine.orm.entity_manager')
+                    ->getRepository('AppBundle:Repartition')
+                    ->isBenevoleInRaid($request->get('idPoste'), $request->get('idBenevole'));
+
+        if(empty($valid)){
+            return new JsonResponse(['message' => 'Le bénévole n\'est pas dans le même raid que le poste'], Response::HTTP_NOT_FOUND); 
+        }
+
         $repartition = new Repartition();
         
         $form = $this->createForm(RepartitionType::class, $repartition);
@@ -183,6 +191,14 @@ class RepartitionController extends Controller
 
         if(empty($idBenevole)) {
             return new JsonResponse(['message' => 'Le bénévole ne peut pas être affecté au poste car le bénévole est inexistant'], Response::HTTP_NOT_FOUND);
+        }
+
+        $valid =  $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Repartition')
+                ->isBenevoleInRaid($request->get('idPoste'), $request->get('idBenevole'));
+
+        if(empty($valid)){
+            return new JsonResponse(['message' => 'Le bénévole n\'est pas dans le même raid que le poste'], Response::HTTP_NOT_FOUND); 
         }
 
         $form = $this->createForm(RepartitionType::class, $repartition);

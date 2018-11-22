@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+
 class CheckinType extends AbstractType
 {
     /**
@@ -14,8 +16,11 @@ class CheckinType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('confirmation')
-            ->add('idRepartition');
+            ->add('idRepartition')
+            ->add('confirmation', DateTimeType::class, array(
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy HH:mm',
+            ));
     }
     
     /**
@@ -24,7 +29,8 @@ class CheckinType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Checkin'
+            'data_class' => 'AppBundle\Entity\Checkin',
+            'csrf_protection' => false
         ));
     }
 

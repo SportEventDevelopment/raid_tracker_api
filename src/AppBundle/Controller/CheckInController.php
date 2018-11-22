@@ -64,14 +64,6 @@ class CheckInController extends Controller
             return new JsonResponse(['message' => 'Le checkin n\'a pas pu être créé car la répartition est inexistante'], Response::HTTP_NOT_FOUND);
         }
 
-        $confirmation = $this->get('doctrine.orm.entity_manager')
-                    ->getRepository('AppBundle:Checkin')
-                    ->find($request->get('confirmation'));
-
-        if(empty($confirmation)) {
-            return new JsonResponse(['message' => 'Le checkin n\'a pas pu être créé car la confirmation est inexistante'], Response::HTTP_NOT_FOUND);
-        }
-
         $checkin = new Checkin();
         
         $form = $this->createForm(CheckinType::class, $checkin);
@@ -137,7 +129,7 @@ class CheckInController extends Controller
         /* @var $point Point */
 
         if(empty($checkin)){
-            return new JsonResponse(["message" => "Checkin non trouvée !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Checkin non trouvé !"], Response::HTTP_NOT_FOUND);
         }
         
         return $checkin;
@@ -170,22 +162,14 @@ class CheckInController extends Controller
         }
 
         $idRepartition = $this->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Repartition')
-            ->find($request->request->get('idRepartition'));
+                        ->getRepository('AppBundle:Repartition')
+                        ->find($request->request->get('idRepartition'));
             
         if(empty($idRepartition)) {
             return new JsonResponse(['message' => 'Le checkin ne peut pas être modifié car la répartition est inexistante'], Response::HTTP_NOT_FOUND);
         }
 
-        $confirmation = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Checkin')
-                ->find($request->request->get('confirmation'));
-
-        if(empty($confirmation)) {
-            return new JsonResponse(['message' => 'Le checkin ne peut pas être modifié car la confirmation est inexistante'], Response::HTTP_NOT_FOUND);
-        }
-
-        $form = $this->createForm(RepartitionType::class, $checkin);
+        $form = $this->createForm(CheckinType::class, $checkin);
         $form->submit($request->request->all());
 
         if ($form->isValid()) {
@@ -237,8 +221,7 @@ class CheckInController extends Controller
     {
         $checkin = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Checkin')
-                ->findBy(array("idRaid" => $request->get('id_raid')));
-        /* @var $benevole Benevole */
+                ->findCheckinByIdRaid($request->get('id_raid'));
 
         if (empty($checkin)) {
             return new JsonResponse(['message' => "Le raid n'a pas encore de checkin !"], Response::HTTP_NOT_FOUND);
@@ -293,7 +276,6 @@ class CheckInController extends Controller
         $checkin = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Checkin')
                 ->findBy(array("idUser" => $request->get('id_user')));
-        /* @var $benevole Benevole */
 
         if (empty($checkin)) {
             return new JsonResponse(['message' => "L'utilisateur n'a pas encore de checkin !"], Response::HTTP_NOT_FOUND);
