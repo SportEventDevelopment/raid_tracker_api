@@ -247,8 +247,8 @@ class CheckInController extends Controller
     public function deleteCheckinByIdRaid(Request $request)
     {   
         $em = $this->get('doctrine.orm.entity_manager');
-        $checkin = $em->getRepository('AppBundle:Checkin')
-                    ->findBy(array("idRaid" => $request->get('id_raid')));
+        $checkins = $em->getRepository('AppBundle:Checkin')
+                    ->findCheckinByIdRaid($request->get('id_raid'));
 
         if ($checkins) {
             foreach ($checkins as $checkin) {
@@ -273,15 +273,15 @@ class CheckInController extends Controller
      */
     public function getCheckinByIdUser(Request $request)
     {
-        $checkin = $this->get('doctrine.orm.entity_manager')
+        $checkins = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Checkin')
-                ->findBy(array("idUser" => $request->get('id_user')));
+                ->findCheckinByIdUser($request->get('id_user'));
 
-        if (empty($checkin)) {
-            return new JsonResponse(['message' => "L'utilisateur n'a pas encore de checkin !"], Response::HTTP_NOT_FOUND);
+        if (empty($checkins)) {
+            return new JsonResponse(['message' => "L'utilisateur n'a pas encore de validé de présences à un poste"], Response::HTTP_NOT_FOUND);
         }
 
-        return $checkin;
+        return $checkins;
     }
 
     /**
@@ -301,8 +301,8 @@ class CheckInController extends Controller
     public function deleteCheckinByIdUser(Request $request)
     {   
         $em = $this->get('doctrine.orm.entity_manager');
-        $checkin = $em->getRepository('AppBundle:Checkin')
-                    ->findBy(array("idUser" => $request->get('id_user')));
+        $checkins = $em->getRepository('AppBundle:Checkin')
+                    ->findCheckinByIdUser($request->get('id_user'));
 
         if ($checkins) {
             foreach ($checkins as $checkin) {
@@ -311,5 +311,4 @@ class CheckInController extends Controller
             $em->flush();
         }
     }
-
 }
