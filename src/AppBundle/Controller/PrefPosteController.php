@@ -57,7 +57,7 @@ class PrefPosteController extends Controller
     public function postPrefPostes(Request $request)
     {
         $idPoste = $this->get('doctrine.orm.entity_manager')
-                    ->getRepository('AppBundle:PrefPoste')
+                    ->getRepository('AppBundle:Poste')
                     ->find($request->get('idPoste'));
 
         if(empty($idPoste)) {
@@ -70,6 +70,14 @@ class PrefPosteController extends Controller
 
         if(empty($benevole)) {
             return new JsonResponse(['message' => 'La préférence de poste ne peut pas être affectée au bénévole car le bénévole est inexistant'], Response::HTTP_NOT_FOUND);
+        }
+
+        $valid =  $this->get('doctrine.orm.entity_manager')
+                    ->getRepository('AppBundle:Repartition')
+                    ->isBenevoleInRaid($request->get('idPoste'), $request->get('idBenevole'));
+
+        if(empty($valid)){
+            return new JsonResponse(['message' => 'Le bénévole n\'est pas dans le même raid que le poste'], Response::HTTP_NOT_FOUND); 
         }
 
         $prefposte = new PrefPoste();
@@ -170,19 +178,27 @@ class PrefPosteController extends Controller
         }
 
         $idPoste = $this->get('doctrine.orm.entity_manager')
-            ->getRepository('AppBundle:Poste')
-            ->find($request->request->get('idPoste'));
+                    ->getRepository('AppBundle:Poste')
+                    ->find($request->request->get('idPoste'));
             
         if(empty($idPoste)) {
             return new JsonResponse(['message' => 'La prefposte ne peut pas être affectée au bénévole car le poste est inexistant'], Response::HTTP_NOT_FOUND);
         }
 
         $idBenevole = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Benevole')
-                ->find($request->request->get('idBenevole'));
+                        ->getRepository('AppBundle:Benevole')
+                        ->find($request->request->get('idBenevole'));
 
         if(empty($idBenevole)) {
             return new JsonResponse(['message' => 'La prefposte ne peut pas être affectée au bénévole car le bénévole est inexistant'], Response::HTTP_NOT_FOUND);
+        }
+
+        $valid =  $this->get('doctrine.orm.entity_manager')
+                    ->getRepository('AppBundle:Repartition')
+                    ->isBenevoleInRaid($request->get('idPoste'), $request->get('idBenevole'));
+
+        if(empty($valid)){
+            return new JsonResponse(['message' => 'Le bénévole n\'est pas dans le même raid que le poste'], Response::HTTP_NOT_FOUND); 
         }
 
         $form = $this->createForm(PrefPosteType::class, $prefposte);
@@ -238,7 +254,6 @@ class PrefPosteController extends Controller
         $prefpostes = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:PrefPoste')
                 ->findBy(array("idBenevole" => $request->get('id_benevole')));
-        /* @var $benevole Benevole */
 
         if (empty($prefpostes)) {
             return new JsonResponse(['message' => "Le bénévole n'a pas encore de préférences de poste !"], Response::HTTP_NOT_FOUND);
@@ -274,5 +289,4 @@ class PrefPosteController extends Controller
             $em->flush();
         }
     }
-
 }

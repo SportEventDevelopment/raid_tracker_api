@@ -33,7 +33,7 @@ class PrefPoste
      * @var Poste
      *
      * @ORM\ManyToOne(targetEntity="Poste")
-     * @ORM\JoinColumn(name="benevole_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="poste_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $idPoste;
 

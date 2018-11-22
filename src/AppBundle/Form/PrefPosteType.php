@@ -14,8 +14,8 @@ class PrefPosteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('idBenevole')
-            ->add('idPoste');
+            ->add('idPoste')
+            ->add('idBenevole');
     }
     
     /**
@@ -24,7 +24,8 @@ class PrefPosteType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\PrefPoste'
+            'data_class' => 'AppBundle\Entity\PrefPoste',
+            'csrf_protection' => false
         ));
     }
 
