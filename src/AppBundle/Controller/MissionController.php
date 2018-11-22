@@ -64,14 +64,6 @@ class MissionController extends Controller
             return new JsonResponse(['message' => 'La mission ne peut pas être affectée au poste car le poste est inexistant'], Response::HTTP_NOT_FOUND);
         }
 
-        $objectif = $this->get('doctrine.orm.entity_manager')
-                    ->getRepository('AppBundle:Mission')
-                    ->find($request->get('objectif'));
-
-        if(empty($objectif)) {
-            return new JsonResponse(['message' => 'La mission ne peut pas être affectée au poste car l\'objectif est inexistant'], Response::HTTP_NOT_FOUND);
-        }
-
         $mission = new Mission();
         
         $form = $this->createForm(MissionType::class, $mission);
@@ -163,7 +155,7 @@ class MissionController extends Controller
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $mission = $this->getDoctrine()->getRepository('AppBundle:Mission')
-                ->find($request->get('id_mission'));
+                        ->find($request->get('id_mission'));
 
         if(empty($mission)){
             return new JsonResponse(["message" => "La mission à modifier n'a pas été trouvée !"], Response::HTTP_NOT_FOUND);
@@ -175,14 +167,6 @@ class MissionController extends Controller
             
         if(empty($idPoste)) {
             return new JsonResponse(['message' => 'La mission ne peut pas être affecté au poste car le poste est inexistant'], Response::HTTP_NOT_FOUND);
-        }
-
-        $objectif = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Mission')
-                ->find($request->request->get('objectif'));
-
-        if(empty($objectif)) {
-            return new JsonResponse(['message' => 'La mission ne peut pas être affectée au poste car l\'objectif est inexistant'], Response::HTTP_NOT_FOUND);
         }
 
         $form = $this->createForm(MissionType::class, $mission);
@@ -212,7 +196,7 @@ class MissionController extends Controller
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $mission = $em->getRepository('AppBundle:Mission')
-                ->find($request->get('id_mission'));
+                    ->find($request->get('id_mission'));
 
         if($mission){
             $em->remove($mission);
@@ -220,117 +204,7 @@ class MissionController extends Controller
         }
     }
 
-        /**
-     * @Doc\ApiDoc(
-     *     section="MISSION",
-     *     description="Get missions of one raid",
-     *     statusCodes={
-     *         200="Returned when missions are found",
-     *         401="Unauthorized, you need to use auth-token",
-     *         404="Returned when no mission is present in the database"
-     *     }
-     * )
-     * @Rest\View()
-     * @Rest\Get("/api/missions/raids/{id_raid}", name="get_all_missions_raid")
-     */
-    public function getMissionsByIdRaid(Request $request)
-    {
-        $missions = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Mission')
-                ->findBy(array("idRaid" => $request->get('id_raid')));
-        /* @var $benevole Benevole */
-
-        if (empty($missions)) {
-            return new JsonResponse(['message' => "Le raid ne contient pas encore de missions !"], Response::HTTP_NOT_FOUND);
-        }
-
-        return $missions;
-    }
-
     /**
-     *  @Doc\ApiDoc(
-     *     section="MISSION",
-     *     input="AppBundle\Form\MissionType",
-     *     output="AppBundle\Form\Mission",
-     *     description="Delete all missions of a specific RAID",
-     *     statusCodes={
-     *         202="Remove all missions successfully",
-     *         400="Bad request",
-     *     }
-     * )
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @Rest\Delete("/api/missions/raids/{id_raid}", name="delete_all_missions_raid")
-     */
-    public function deleteMissionsByIdRaid(Request $request)
-    {   
-        $em = $this->get('doctrine.orm.entity_manager');
-        $missions = $em->getRepository('AppBundle:Mission')
-                    ->findBy(array("idRaid" => $request->get('id_raid')));
-
-        if ($missions) {
-            foreach ($missions as $mission) {
-                $em->remove($mission);
-            }
-            $em->flush();
-        }
-    }
-
-        /**
-     * @Doc\ApiDoc(
-     *     section="MISSION",
-     *     description="Get misisons of one parcours",
-     *     statusCodes={
-     *         200="Returned when missions are found",
-     *         401="Unauthorized, you need to use auth-token",
-     *         404="Returned when no mission is present in the database"
-     *     }
-     * )
-     * @Rest\View()
-     * @Rest\Get("/api/missions/parcours/{id_parcours}", name="get_all_missions_parcours")
-     */
-    public function getMissionsByIdParcours(Request $request)
-    {
-        $missions = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:Mission')
-                ->findBy(array("idParcours" => $request->get('id_parcours')));
-        /* @var $benevole Benevole */
-
-        if (empty($missions)) {
-            return new JsonResponse(['message' => "Le parcours ne contient pas encore de missions !"], Response::HTTP_NOT_FOUND);
-        }
-
-        return $missions;
-    }
-
-    /**
-     *  @Doc\ApiDoc(
-     *     section="MISSION",
-     *     input="AppBundle\Form\MissionType",
-     *     output="AppBundle\Form\Mission",
-     *     description="Delete all missions of a specific PARCOURS",
-     *     statusCodes={
-     *         202="Remove all missions successfully",
-     *         400="Bad request",
-     *     }
-     * )
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     * @Rest\Delete("/api/missions/parcours/{id_parcours}", name="delete_all_missions_parcours")
-     */
-    public function deleteMissionsByIdParcours(Request $request)
-    {   
-        $em = $this->get('doctrine.orm.entity_manager');
-        $missions = $em->getRepository('AppBundle:Mission')
-                    ->findBy(array("idParcours" => $request->get('id_parcours')));
-
-        if ($missions) {
-            foreach ($missions as $mission) {
-                $em->remove($mission);
-            }
-            $em->flush();
-        }
-    }
-
-        /**
      * @Doc\ApiDoc(
      *     section="MISSION",
      *     description="Get missions of one poste",
@@ -347,8 +221,7 @@ class MissionController extends Controller
     {
         $missions = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Mission')
-                ->findBy(array("idPoste" => $request->get('id_poste')));
-        /* @var $benevole Benevole */
+                ->findBy(array('idPoste' => $request->get('id_poste')));
 
         if (empty($missions)) {
             return new JsonResponse(['message' => "Le poste n'a pas encore de missions !"], Response::HTTP_NOT_FOUND);
@@ -376,6 +249,114 @@ class MissionController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $missions = $em->getRepository('AppBundle:Mission')
                     ->findBy(array("idPoste" => $request->get('id_poste')));
+
+        if ($missions) {
+            foreach ($missions as $mission) {
+                $em->remove($mission);
+            }
+            $em->flush();
+        }
+    }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="MISSION",
+     *     description="Get missions of one raid",
+     *     statusCodes={
+     *         200="Returned when missions are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no mission is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/missions/raids/{id_raid}", name="get_all_missions_raid")
+     */
+    public function getMissionsByIdRaid(Request $request)
+    {
+        $missions = $this->get('doctrine.orm.entity_manager')
+                    ->getRepository('AppBundle:Mission')
+                    ->findMissionsByIdRaid($request->get('id_raid'));
+
+        if (empty($missions)) {
+            return new JsonResponse(['message' => "Le raid ne contient pas encore de missions !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $missions;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="MISSION",
+     *     input="AppBundle\Form\MissionType",
+     *     output="AppBundle\Form\Mission",
+     *     description="Delete all missions of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all missions successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/missions/raids/{id_raid}", name="delete_all_missions_raid")
+     */
+    public function deleteMissionsByIdRaid(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $missions = $em->getRepository('AppBundle:Mission')
+                    ->findMissionsByIdRaid($request->get('id_raid'));
+
+        if ($missions) {
+            foreach ($missions as $mission) {
+                $em->remove($mission);
+            }
+            $em->flush();
+        }
+    }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="MISSION",
+     *     description="Get misisons of one parcours",
+     *     statusCodes={
+     *         200="Returned when missions are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no mission is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/missions/parcours/{id_parcours}", name="get_all_missions_parcours")
+     */
+    public function getMissionsByIdParcours(Request $request)
+    {
+        $missions = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Mission')
+                ->findMissionsByIdParcours($request->get('id_parcours'));
+               
+        if (empty($missions)) {
+            return new JsonResponse(['message' => "Le parcours ne contient pas encore de missions !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $missions;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="MISSION",
+     *     input="AppBundle\Form\MissionType",
+     *     output="AppBundle\Form\Mission",
+     *     description="Delete all missions of a specific PARCOURS",
+     *     statusCodes={
+     *         202="Remove all missions successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/missions/parcours/{id_parcours}", name="delete_all_missions_parcours")
+     */
+    public function deleteMissionsByIdParcours(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $missions = $em->getRepository('AppBundle:Mission')
+                    ->findMissionsByIdParcours($request->get('id_parcours'));
 
         if ($missions) {
             foreach ($missions as $mission) {

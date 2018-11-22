@@ -14,8 +14,8 @@ class MissionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('objectif')
-            ->add('idPoste');
+            ->add('idPoste')
+            ->add('objectif');
     }
     
     /**
@@ -24,7 +24,8 @@ class MissionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Mission'
+            'data_class' => 'AppBundle\Entity\Mission',
+            'csrf_protection' => false
         ));
     }
 
