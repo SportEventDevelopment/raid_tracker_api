@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class PosteType extends AbstractType
 {
@@ -21,11 +21,13 @@ class PosteType extends AbstractType
             ->add('idPoint')
             ->add('type', TextType::class)
             ->add('nombre', IntegerType::class)
-            ->add('heureDebut', TimeType::class, array(
-                'widget' => 'single_text'
+            ->add('heureDebut', DateTimeType::class, array(
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy HH:mm'
             ))
-            ->add('heureFin', TimeType::class, array(
-                'widget' => 'single_text' 
+            ->add('heureFin', DateTimeType::class, array(
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy HH:mm'
             ));
     }/**
      * {@inheritdoc}

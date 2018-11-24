@@ -228,13 +228,37 @@ class PosteController extends Controller
         
         return $postes;
     }
-    
-    // /api/postes/benevoles/{id_benevole}
 
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all postes of a specific Benevole",
+     *     statusCodes={
+     *         202="Remove all prefpostes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/benevoles/{id_benevole}", name="delete_all_postes_benevole")
+     */
+    public function deletePostesByIdBenevole(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $postes = $em->getRepository('AppBundle:Poste')
+                    ->findPostesByIdBenevole($request->get('id_benevole'));
+
+        if ($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
+    
     /**
      * @Doc\ApiDoc(
      *     section="POSTE",
-     *     description="Get all postes",
+     *     description="Get all postes by id raid",
      *     statusCodes={
      *         200="Returned when postes are found",
      *         401="Unauthorized, you need to use auth-token",
@@ -242,7 +266,7 @@ class PosteController extends Controller
      *     }
      * )
      * @Rest\View()
-     * @Rest\Get("/api/postes/raid/{id_raid}", name="get_all_poste_by_idraid")
+     * @Rest\Get("/api/postes/raids/{id_raid}", name="get_all_poste_by_idraid")
      */
     public function getPostesByIdRaid(Request $request)
     {
@@ -256,13 +280,37 @@ class PosteController extends Controller
         
         return $postes;
     }
-    
-    // /api/postes/raid/{id_raid}
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all postes of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all postes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/raids/{id_raid}", name="delete_all_postes_raid")
+     */
+    public function deletePostesByIdRaid(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $postes = $em->getRepository('AppBundle:Poste')
+                    ->findPostesByIdRaid($request->get('id_raid'));
+
+        if ($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
 
     /**
      * @Doc\ApiDoc(
      *     section="POSTE",
-     *     description="Get all postes",
+     *     description="Get all postes available by id raid",
      *     statusCodes={
      *         200="Returned when postes are found",
      *         401="Unauthorized, you need to use auth-token",
@@ -270,27 +318,51 @@ class PosteController extends Controller
      *     }
      * )
      * @Rest\View()
-     * @Rest\Get("/api/postes/raid/{id_raid}/available", name="get_all_poste_available_by_idraid")
+     * @Rest\Get("/api/postes/raids/{id_raid}/available", name="get_all_poste_available_by_idraid")
      */
     public function getPostesAvailableByIdRaid(Request $request)
     {
         $postes = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Poste')
-                ->findAll();
+                ->findAvailablePosteByIdRaid($request->get('id_raid'));
         
         if(empty($postes)){
-            return new JsonResponse(["message" => "Aucun poste affectés pour ce bénévole "], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Aucun poste disponible dans ce raid (".$request->get('id_raid').")"], Response::HTTP_NOT_FOUND);
         }
         
         return $postes;
     }
-    
-    // /api/postes/raid/{id_raid}/available
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all available postes of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all postes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/raids/{id_raid}/available", name="delete_all_available_postes_raid")
+     */
+    public function deletePostesAvailableByIdRaid(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $postes = $em->getRepository('AppBundle:Poste')
+                    ->findAvailablePosteByIdRaid($request->get('id_raid'));
+
+        if ($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
 
     /**
      * @Doc\ApiDoc(
      *     section="POSTE",
-     *     description="Get all postes",
+     *     description="Get all postes by id parcours",
      *     statusCodes={
      *         200="Returned when postes are found",
      *         401="Unauthorized, you need to use auth-token",
@@ -304,7 +376,7 @@ class PosteController extends Controller
     {
         $postes = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Poste')
-                ->findAll();
+                ->findPostesByIdParcours($request->get('id_parcours'));
         
         if(empty($postes)){
             return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
@@ -312,13 +384,37 @@ class PosteController extends Controller
         
         return $postes;
     }
-    
-    // /api/postes/parcours/{id_parcours}
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all postes of a specific PARCOURS",
+     *     statusCodes={
+     *         202="Remove all prefpostes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/parcours/{id_parcours}", name="delete_all_postes_parcours")
+     */
+    public function deletePostesByIdParcours(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $postes = $em->getRepository('AppBundle:Poste')
+                    ->findPostesByIdParcours($request->get('id_parcours'));
+
+        if ($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
 
     /**
      * @Doc\ApiDoc(
      *     section="POSTE",
-     *     description="Get all postes",
+     *     description="Get all postes by id parcours",
      *     statusCodes={
      *         200="Returned when postes are found",
      *         401="Unauthorized, you need to use auth-token",
@@ -332,14 +428,38 @@ class PosteController extends Controller
     {
         $postes = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Poste')
-                ->findAll();
+                ->findAvailablePosteByIdParcours($request->get('id_parcours'));
         
         if(empty($postes)){
-            return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(["message" => "Aucun poste disponible dans le parcours (". $request->get('id_parcours') .")"], Response::HTTP_NOT_FOUND);
         }
         
         return $postes;
     }
-    
-    // /api/postes/parcours/{id_parcours}/available
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all available postes of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all postes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/parcours/{id_parcours}/available", name="delete_all_available_postes_by_idparcours")
+     */
+    public function deletePostesAvailableByIdParcours(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $postes = $em->getRepository('AppBundle:Poste')
+                    ->findAvailablePosteByIdParcours($request->get('id_parcours'));
+
+        if ($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
 }
