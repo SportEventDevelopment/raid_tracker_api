@@ -44,16 +44,16 @@ class Poste
     private $nombre;
 
     /**
-     * @var \Time
+     * @var \DateTime
      *
-     * @ORM\Column(name="heureDebut", type="time")
+     * @ORM\Column(name="heureDebut", type="datetime")
      */
     private $heureDebut;
 
     /**
-     * @var \Time
+     * @var \DateTime
      *
-     * @ORM\Column(name="heureFin", type="time")
+     * @ORM\Column(name="heureFin", type="datetime")
      */
     private $heureFin;
 

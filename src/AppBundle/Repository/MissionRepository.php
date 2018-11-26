@@ -10,4 +10,28 @@ namespace AppBundle\Repository;
  */
 class MissionRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findMissionsByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT m FROM AppBundle:Mission m
+            INNER JOIN AppBundle:Poste poste WITH poste.id = m.idPoste
+            INNER JOIN AppBundle:Point point WITH point.id = poste.idPoint
+            INNER JOIN AppBundle:Trace trace WITH trace.id = point.idTrace
+            INNER JOIN AppBundle:Parcours parcours WITH parcours.id = trace.idParcours
+            WHERE parcours.idRaid = :idRaid'
+        )->setParameter('idRaid', $id_raid);
+        
+        return $query->getResult();
+    }
+
+    function findMissionsByIdParcours($id_parcours){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT m FROM AppBundle:Mission m
+            INNER JOIN AppBundle:Poste poste WITH poste.id = m.idPoste
+            INNER JOIN AppBundle:Point point WITH point.id = poste.idPoint
+            INNER JOIN AppBundle:Trace trace WITH trace.id = point.idTrace
+            WHERE trace.idParcours = :idParcours'
+        )->setParameter('idParcours', $id_parcours);
+        
+        return $query->getResult();
+    }
 }

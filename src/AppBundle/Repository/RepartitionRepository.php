@@ -10,4 +10,73 @@ namespace AppBundle\Repository;
  */
 class RepartitionRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findRepartitionsByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r 
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id 
+            WHERE b.idRaid = :idRaid'
+        )->setParameter('idRaid', $id_raid);
+        
+        return $query->getResult();
+    }
+
+    function findRepartitionsByIdParcours($id_parcours){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+            INNER JOIN AppBundle:Parcours parcours WITH b.idRaid = parcours.idRaid 
+            INNER JOIN AppBundle:Poste poste WITH r.idPoste = poste.id 
+            INNER JOIN AppBundle:Point point WITH poste.idPoint = point.id 
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id
+            WHERE trace.idParcours = parcours.id AND parcours.id = :idParcours '
+        )->setParameter('idParcours', $id_parcours);
+        
+        return $query->getResult();        
+    }
+
+    function findRepartitionsByIdUser($id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+            INNER JOIN AppBundle:User u WITH b.idUser = u.id
+            WHERE u.id = :idUser '
+        )->setParameter('idUser', $id_user);
+        
+        return $query->getResult();        
+    }
+
+    function isBenevoleInRaid($id_poste, $id_benevole){
+
+        // $query1 = $this->getEntityManager()->createQuery(
+        //     'SELECT IDENTITY(b.idRaid) FROM AppBundle:Benevole b
+        //     INNER JOIN AppBundle:Repartition r WITH b.id = r.idBenevole 
+        //     WHERE b.id = :idBenevole'
+        // )->setParameter('idBenevole', $id_benevole);
+        // $res1 = $query1->getResult();
+
+        // $query2 = $this->getEntityManager()->createQuery(
+        //     'SELECT IDENTITY(p.idRaid) FROM AppBundle:Parcours p
+        //     INNER JOIN AppBundle:Trace trace WITH trace.idParcours = p.id
+        //     INNER JOIN AppBundle:Point point WITH point.idTrace = trace.id
+        //     INNER JOIN AppBundle:Poste poste WITH poste.idPoint = point.id
+        //     INNER JOIN AppBundle:Repartition r WITH r.idPoste = poste.id
+        //     WHERE poste.id = :idPoste'
+        // )->setParameter('idPoste', $id_poste);
+        // $res2 = $query2->getResult();
+
+        // $query3 = $this->getEntityManager()->createQuery('SELECT * FROM $res1');
+        // $res3 = $query3->getResult();
+
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT b FROM AppBundle:Benevole b
+            INNER JOIN AppBundle:Parcours p WITH b.idRaid = p.idRaid
+            INNER JOIN AppBundle:Trace trace WITH trace.idParcours = p.id
+            INNER JOIN AppBundle:Point point WITH point.idTrace = trace.id
+            INNER JOIN AppBundle:Poste poste WITH poste.idPoint = point.id
+            WHERE poste.id = :idPoste AND b.id= :idBenevole'
+        )
+        ->setParameter('idPoste', $id_poste)
+        ->setParameter('idBenevole', $id_benevole);
+        return $query->getResult();
+    }
 }

@@ -32,7 +32,7 @@ class Checkin
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="confirmation", type="date")
+     * @ORM\Column(name="confirmation", type="datetime")
      */
     private $confirmation;
 

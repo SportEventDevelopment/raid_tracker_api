@@ -6,11 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
-class PosteType extends AbstractType
+class CheckinType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -18,25 +16,21 @@ class PosteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('idPoint')
-            ->add('type', TextType::class)
-            ->add('nombre', IntegerType::class)
-            ->add('heureDebut', DateTimeType::class, array(
+            ->add('idRepartition')
+            ->add('confirmation', DateTimeType::class, array(
                 'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy HH:mm'
-            ))
-            ->add('heureFin', DateTimeType::class, array(
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy HH:mm'
+                'format' => 'dd/MM/yyyy HH:mm',
             ));
-    }/**
+    }
+    
+    /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Poste',
-            "csrf_protection" => false
+            'data_class' => 'AppBundle\Entity\Checkin',
+            'csrf_protection' => false
         ));
     }
 
@@ -45,7 +39,7 @@ class PosteType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'appbundle_poste';
+        return 'appbundle_checkin';
     }
 
 

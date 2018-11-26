@@ -13,8 +13,8 @@ class PosteRepository extends \Doctrine\ORM\EntityRepository
     function findPostesByIdBenevole($id_benevole){
         $query = $this->getEntityManager()->createQuery(
             'SELECT poste FROM AppBundle:Poste poste
-            INNER JOIN AppBundle:Repartition r
-            WHERE poste.id = r.idPoste AND r.idBenevole = :idBenevole'
+            INNER JOIN AppBundle:Repartition r WITH poste.id = r.idPoste 
+            WHERE r.idBenevole = :idBenevole'
         )->setParameter('idBenevole', $id_benevole);
         
         return $query->getResult();
@@ -23,9 +23,81 @@ class PosteRepository extends \Doctrine\ORM\EntityRepository
     function findPostesByIdRaid($id_raid){
         $query = $this->getEntityManager()->createQuery(
             'SELECT poste FROM AppBundle:Poste poste
-            INNER JOIN AppBundle:Repartition r
-            WHERE poste.id = r.idPoste AND r.idBenevole = :idBenevole'
-        )->setParameter('idBenevole', $id_raid);
+            INNER JOIN AppBundle:Point point WITH poste.idPoint = point.id
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id 
+            INNER JOIN AppBundle:Parcours parcours WITH trace.idParcours = parcours.id 
+            WHERE parcours.idRaid = :idRaid'
+        )->setParameter('idRaid', $id_raid);
+        
+        return $query->getResult();
+    }
+
+    function findPostesByIdParcours($id_parcours){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT poste FROM AppBundle:Poste poste
+            INNER JOIN AppBundle:Point point WITH poste.idPoint = point.id
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id
+            WHERE trace.idParcours = :idParcours'
+        )->setParameter('idParcours', $id_parcours);
+        
+        return $query->getResult();
+    }
+
+    function findAvailablePosteByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+
+            // Requete 1 récupère tous les postes d'un raid
+            // Requete 2 récupère tous les postes complet d'un raid (nombre = nb_benevole_affecte_poste)
+            // Requete 3 récupère le nombre de bénévole affecté à un poste
+            'SELECT p FROM AppBundle:Poste p
+            INNER JOIN AppBundle:Point point WITH p.idPoint = point.id
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id
+            INNER JOIN AppBundle:Parcours parcours WITH trace.idParcours = parcours.id
+            WHERE parcours.idRaid = :idRaid AND p NOT IN (
+                SELECT p2 FROM AppBundle:Repartition r
+                INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+                INNER JOIN AppBundle:Poste p2 WITH r.idPoste = p2.id
+                WHERE b.idRaid = :idRaid AND p2.nombre = (
+                    SELECT COUNT(r2.idPoste) FROM AppBundle:Repartition r2
+                    INNER JOIN AppBundle:Benevole b2 WITH b2.id = r2.idBenevole
+                    WHERE b2.idRaid = :idRaid AND p2.id = r2.idPoste
+                    GROUP BY r2.idPoste
+                )
+                GROUP BY p2.id
+            )'
+        )->setParameter('idRaid',$id_raid);
+        
+        return $query->getResult();
+    }
+
+    function findAvailablePosteByIdParcours($id_parcours){
+        $query = $this->getEntityManager()->createQuery(
+
+            // Requete 1 récupère tous les postes d'un parcours
+            // Requete 2 récupère tous les postes complet d'un parcours (nombre = nb_benevole_affecte_poste)
+            // Requete 3 récupère le nombre de bénévole affecté à un poste
+            'SELECT p FROM AppBundle:Poste p
+            INNER JOIN AppBundle:Point point WITH p.idPoint = point.id
+            INNER JOIN AppBundle:Trace trace WITH point.idTrace = trace.id
+            INNER JOIN AppBundle:Parcours parcours WITH trace.idParcours = parcours.id
+            WHERE parcours.id = :idParcours AND p NOT IN (
+                SELECT p2 FROM AppBundle:Repartition r
+                INNER JOIN AppBundle:Poste p2 WITH r.idPoste = p2.id
+                INNER JOIN AppBundle:Point point2 WITH p2.idPoint = point2.id
+                INNER JOIN AppBundle:Trace trace2 WITH point2.idTrace = trace2.id
+                INNER JOIN AppBundle:Parcours parcours2 WITH trace2.idParcours = parcours2.id
+                WHERE trace2.idParcours = :idParcours AND p2.nombre = (
+                    SELECT COUNT(r2.idPoste) FROM AppBundle:Repartition r2
+                    INNER JOIN AppBundle:Poste p3 WITH r2.idPoste = p3.id
+                    INNER JOIN AppBundle:Point point3 WITH p3.idPoint = point3.id
+                    INNER JOIN AppBundle:Trace trace3 WITH point3.idTrace = trace3.id
+                    INNER JOIN AppBundle:Parcours parcours3 WITH trace3.idParcours = parcours3.id
+                    WHERE parcours3.id = :idParcours and p3.id = p2.id
+                    GROUP BY r2.idPoste
+                )
+                GROUP BY p2.id
+            )'
+        )->setParameter('idParcours',$id_parcours);
         
         return $query->getResult();
     }
