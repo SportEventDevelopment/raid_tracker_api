@@ -18,6 +18,10 @@ security:
             pattern: ^/api/users
             methods: [POST]
             security: false
+        api_raids:
+            pattern: ^/api/raids/visible/all
+            methods: [GET]
+            security: false
         main:
             pattern: ^/
             stateless: true

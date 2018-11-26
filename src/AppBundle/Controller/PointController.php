@@ -216,19 +216,21 @@ class PointController extends Controller
      * @Rest\View()
      * @Rest\Get("/api/points/traces/{id_trace}", name="get_point_one_trace")
      */
-    public function getPointByIdTrace(Request $request)
+    public function getPointsByIdTrace(Request $request)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
                     ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
         }
 
         $points = $em->getRepository('AppBundle:Point')
-                    ->findBy(array('idTrace' => $request->get('id_trace')));
+                    ->findBy(
+                        array('idTrace' => $request->get('id_trace')), 
+                        array('ordre' => 'ASC')
+                    );
 
         if(empty($points)){
             return new JsonResponse(["message" => "Aucun points dans ce tracé"], Response::HTTP_NOT_FOUND);
@@ -249,19 +251,21 @@ class PointController extends Controller
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/points/traces/{id_trace}", name="delete_point_one_trace")
      */
-    public function deletePointByIdTrace(Request $request)
+    public function deletePointsByIdTrace(Request $request)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
                     ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
         }
 
         $points = $em->getRepository('AppBundle:Point')
-                    ->findBy(array('idTrace' => $request->get('id_trace')));
+                    ->findBy(
+                        array('idTrace' => $request->get('id_trace')),
+                        array('ordre' => 'ASC')
+                    );
 
         if($points){
             foreach($points as $point){
@@ -289,7 +293,6 @@ class PointController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
                 ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
@@ -326,7 +329,6 @@ class PointController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
             ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
@@ -363,7 +365,6 @@ class PointController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
             ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
@@ -400,7 +401,6 @@ class PointController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $trace = $em->getRepository('AppBundle:Trace')
             ->find($request->get('id_trace'));
-        /* @var $trace Trace */
 
         if(empty($trace)){
             return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
