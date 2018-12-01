@@ -10,4 +10,12 @@ namespace AppBundle\Repository;
  */
 class PrefPosteRepository extends \Doctrine\ORM\EntityRepository
 {
+    function findPrefPostesByIdRaid($id_raid){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT p FROM AppBundle:PrefPoste p
+            INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
+            WHERE b.idRaid = :idRaid'
+        )->setParameter('idRaid', $id_raid);
+        return $query->getResult();
+    }
 }
