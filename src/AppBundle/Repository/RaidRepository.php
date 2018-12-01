@@ -38,4 +38,20 @@ class RaidRepository extends \Doctrine\ORM\EntityRepository
         
         return $query->getResult();
     }
+
+    function findRaidsVisibleByIdUser($id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Raid r
+            WHERE r.visibility = true 
+            AND r NOT IN (
+                SELECT r2 FROM AppBundle:Repartition rep
+                INNER JOIN AppBundle:Benevole b WITH b.id = rep.idBenevole
+                INNER JOIN AppBundle:Raid r2 WITH r2.id = b.idRaid
+                WHERE b.idUser = :idUser
+                GROUP BY r2.id
+            )'
+        )->setParameter('idUser',$id_user);
+        
+        return $query->getResult();
+    }
 }
