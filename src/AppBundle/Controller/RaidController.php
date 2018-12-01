@@ -249,6 +249,59 @@ class RaidController extends Controller
     /**
      * @Doc\ApiDoc(
      *     section="RAID",
+     *     description="Get all raids visibles for a user without raids benevoles",
+     *     statusCodes={
+     *         200="Returned when raids are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no raids are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/raids/visible/users/{id_user}", name="get_raids_visibles_without_benevoles_raid")
+     */
+    public function getRaidsVisiblesByIdUser(Request $request)
+    {
+        $raids = $this->getDoctrine()->getManager()
+                ->getRepository('AppBundle:Raid')
+                ->findRaidsVisibleByIdUser($request->get('id_user'));
+
+        if(empty($raids)){
+            return new JsonResponse(["message" => "Aucun RAID visible pour cet utilisateur présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $raids;
+    }
+    
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
+     *     description="Delete all raids visibles for a user without raids benevoles",
+     *     statusCodes={
+     *         202="All raids have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/raids/visible/users/{id_user}", name="delete_raids_visibles_without_benevoles_raid")
+     */
+    public function deleteRaidsVisiblesByIdUser(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $raids = $em->getRepository('AppBundle:Raid')
+            ->findRaidsVisibleByIdUser($request->get('id_user'));
+
+        if($raids) {
+            foreach ($raids as $raid) {
+                $em->remove($raid);
+            }
+            $em->flush();
+        }
+    }
+    
+    /**
+     * @Doc\ApiDoc(
+     *     section="RAID",
      *     description="Get all raids benevoles of one user",
      *     statusCodes={
      *         200="Returned when raids are found",
