@@ -100,7 +100,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * @Doc\ApiDoc(
      *     section="USER",
@@ -192,6 +191,57 @@ class UserController extends Controller
         $em = $this->get('doctrine.orm.entity_manager');
         $user = $em->getRepository('AppBundle:User')
                 ->find($request->get('id_user'));
+
+        if($user){
+            $em->remove($user);
+            $em->flush();
+        }
+    }
+
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     description="Get one user by email",
+     *     statusCodes={
+     *         200="Returned when users are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no users are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/users/emails/{email}", name="get_users_one_by_email")
+     */
+    public function getOneUserByEmail(Request $request)
+    {
+        $em =  $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+                ->findOneBy(array('email' => $request->get('email')));
+
+        if(empty($user)){
+            return new JsonResponse(["message" => "Utilisateur non trouvé !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $user;
+    }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="USER",
+     *     description="Delete one user by email",
+     *     statusCodes={
+     *         202="Returned when user is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/users/emails/{email}", name="delete_users_one_by_email")
+     */
+    public function deleteOneUserByEmail(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+                ->findOneBy(array('email' => $request->get('email')));
 
         if($user){
             $em->remove($user);
