@@ -236,7 +236,59 @@ class PrefPosteController extends Controller
         }
     }
 
-        /**
+    /**
+     * @Doc\ApiDoc(
+     *     section="PREFPOSTE",
+     *     description="Get PREFPOSTE of one raid",
+     *     statusCodes={
+     *         200="Returned when prefpostes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no prefposte is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/prefpostes/raids/{id_raid}", name="get_all_prefpostes_raid")
+     */
+    public function getPrefPostesByIdRaid(Request $request)
+    {
+        $prefpostes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:PrefPoste')
+                ->findPrefPostesByIdRaid($request->get('id_raid'));
+
+        if (empty($prefpostes)) {
+            return new JsonResponse(['message' => "Le raid n'a pas encore de préférences de poste !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $prefpostes;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="PREFPOSTE",
+     *     description="Delete all prefpostes of a specific RAID",
+     *     statusCodes={
+     *         202="Remove all prefpostes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/prefpostes/raids/{id_raid}", name="delete_all_prefpostes_raid")
+     */
+    public function deletePrefPostesByIdBenevole(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $prefpostes = $em->getRepository('AppBundle:PrefPoste')
+            ->findPrefPostesByIdRaid($request->get('id_raid'));
+
+        if ($prefpostes) {
+            foreach ($prefpostes as $prefposte) {
+                $em->remove($prefposte);
+            }
+            $em->flush();
+        }
+    }
+
+    /**
      * @Doc\ApiDoc(
      *     section="PREFPOSTE",
      *     description="Get PREFPOSTE of one benevole",
