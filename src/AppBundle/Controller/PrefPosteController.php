@@ -274,7 +274,7 @@ class PrefPosteController extends Controller
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/api/prefpostes/raids/{id_raid}", name="delete_all_prefpostes_raid")
      */
-    public function deletePrefPostesByIdBenevole(Request $request)
+    public function deletePrefPostesByIdRaid(Request $request)
     {   
         $em = $this->get('doctrine.orm.entity_manager');
         $prefpostes = $em->getRepository('AppBundle:PrefPoste')
