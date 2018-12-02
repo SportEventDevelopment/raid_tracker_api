@@ -416,7 +416,7 @@ class RepartitionController extends Controller
     {
         $repartition = $this->get('doctrine.orm.entity_manager')
                         ->getRepository('AppBundle:Repartition')
-                        ->findIfUserIsAffected($request->get('id_user'));
+                        ->findIfUserIsAffected($request->get('id_user'),$request->get('id_poste'));
 
         if (empty($repartition)) {
             return new JsonResponse(['message' => "L'utilisateur n'est pas affecté sur ce poste !"], Response::HTTP_NOT_FOUND);
@@ -441,7 +441,7 @@ class RepartitionController extends Controller
     {   
         $em = $this->get('doctrine.orm.entity_manager');
         $repartition = $em->getRepository('AppBundle:Repartition')
-                        ->findIfUserIsAffected($request->get('id_user'));
+                        ->findIfUserIsAffected($request->get('id_user'),$request->get('id_poste'));
 
         if($repartition){
             $em->remove($repartition);
