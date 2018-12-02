@@ -46,27 +46,6 @@ class RepartitionRepository extends \Doctrine\ORM\EntityRepository
     }
 
     function isBenevoleInRaid($id_poste, $id_benevole){
-
-        // $query1 = $this->getEntityManager()->createQuery(
-        //     'SELECT IDENTITY(b.idRaid) FROM AppBundle:Benevole b
-        //     INNER JOIN AppBundle:Repartition r WITH b.id = r.idBenevole 
-        //     WHERE b.id = :idBenevole'
-        // )->setParameter('idBenevole', $id_benevole);
-        // $res1 = $query1->getResult();
-
-        // $query2 = $this->getEntityManager()->createQuery(
-        //     'SELECT IDENTITY(p.idRaid) FROM AppBundle:Parcours p
-        //     INNER JOIN AppBundle:Trace trace WITH trace.idParcours = p.id
-        //     INNER JOIN AppBundle:Point point WITH point.idTrace = trace.id
-        //     INNER JOIN AppBundle:Poste poste WITH poste.idPoint = point.id
-        //     INNER JOIN AppBundle:Repartition r WITH r.idPoste = poste.id
-        //     WHERE poste.id = :idPoste'
-        // )->setParameter('idPoste', $id_poste);
-        // $res2 = $query2->getResult();
-
-        // $query3 = $this->getEntityManager()->createQuery('SELECT * FROM $res1');
-        // $res3 = $query3->getResult();
-
         $query = $this->getEntityManager()->createQuery(
             'SELECT b FROM AppBundle:Benevole b
             INNER JOIN AppBundle:Parcours p WITH b.idRaid = p.idRaid
@@ -78,5 +57,16 @@ class RepartitionRepository extends \Doctrine\ORM\EntityRepository
         ->setParameter('idPoste', $id_poste)
         ->setParameter('idBenevole', $id_benevole);
         return $query->getResult();
+    }
+
+    function findIfUserIsAffected($id_user, $id_poste){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH r.idBenevole = b.id
+            WHERE b.idUser = :idUser AND r.idPoste= :idPoste'
+        )
+        ->setParameter('idUser', $id_user)
+        ->setParameter('idPoste', $id_poste);
+        return $query->getSingleResult();
     }
 }
