@@ -376,8 +376,6 @@ class RepartitionController extends Controller
     /**
      *  @Doc\ApiDoc(
      *     section="REPARTITION",
-     *     input="AppBundle\Form\RepartitionType",
-     *     output="AppBundle\Form\Repartition",
      *     description="Delete all repartitions of a specific USER",
      *     statusCodes={
      *         202="Remove all repartitions successfully",
@@ -401,4 +399,53 @@ class RepartitionController extends Controller
         }
     }
 
+    /**
+     * @Doc\ApiDoc(
+     *     section="REPARTITION",
+     *     description="Get repartition if the user has already been affected",
+     *     statusCodes={
+     *         200="Returned when repartitions are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no repartition is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/repartitions/users/{id_user}/postes/{id_poste}", name="get_repartition_if_user_affected")
+     */
+    public function getRepartitionIfUserHasAlreadyBeenAffected(Request $request)
+    {
+        $repartition = $this->get('doctrine.orm.entity_manager')
+                        ->getRepository('AppBundle:Repartition')
+                        ->findIfUserIsAffected($request->get('id_user'));
+
+        if (empty($repartition)) {
+            return new JsonResponse(['message' => "L'utilisateur n'est pas affecté sur ce poste !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $repartition;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="REPARTITION",
+     *     description="Delete repartition if the user has already been affected",
+     *     statusCodes={
+     *         202="Remove all repartitions successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/repartitions/users/{id_user}/postes/{id_poste}", name="delete_repartition_if_user_affected")
+     */
+    public function deleteRepartitionIfUserHasAlreadyBeenAffected(Request $request)
+    {   
+        $em = $this->get('doctrine.orm.entity_manager');
+        $repartition = $em->getRepository('AppBundle:Repartition')
+                        ->findIfUserIsAffected($request->get('id_user'));
+
+        if($repartition){
+            $em->remove($repartition);
+            $em->flush();
+        }
+    }
 }
