@@ -92,3 +92,25 @@ fos_rest:
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': 401
 
 nelmio_api_doc: ~
+nelmio_cors:
+    defaults:
+        allow_origin: ['*']
+        allow_headers: []
+        allow_methods: ['GET','POST','DELETE']
+        max_age: 0
+        hosts: []
+        origin_regex: false
+        forced_allow_origin_value: ~
+    paths:
+        '^/api/':
+            allow_origin: ['*']
+            allow_headers: ['X-Auth-Token']
+            allow_methods: ['POST', 'GET', 'DELETE']
+            max_age: 3600
+        '^/':
+            origin_regex: true
+            allow_origin: ['^http://localhost']
+            allow_headers: ['X-Auth-Token']
+            allow_methods: ['POST', 'GET', 'DELETE']
+            max_age: 3600
+            hosts: ['^api\.']
