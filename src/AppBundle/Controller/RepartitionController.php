@@ -415,7 +415,7 @@ class RepartitionController extends Controller
     public function getRepartitionIfUserHasAlreadyBeenAffected(Request $request)
     {
         $user = $this->get('doctrine.orm.entity_manager')
-                        ->getRepository('AppBundle:Poste')
+                        ->getRepository('AppBundle:User')
                         ->find($request->get('id_user'));
 
         if (empty($user)) {
@@ -459,8 +459,8 @@ class RepartitionController extends Controller
     public function deleteRepartitionIfUserHasAlreadyBeenAffected(Request $request)
     {   
         $user = $this->get('doctrine.orm.entity_manager')
-        ->getRepository('AppBundle:Poste')
-        ->find($request->get('id_user'));
+                    ->getRepository('AppBundle:User')
+                    ->find($request->get('id_user'));
 
         if (empty($user)) {
             return new JsonResponse(['message' => "Cet utilisateur n'existe pas"], Response::HTTP_NOT_FOUND);
