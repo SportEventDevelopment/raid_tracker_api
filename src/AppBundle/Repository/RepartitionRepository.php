@@ -69,4 +69,17 @@ class RepartitionRepository extends \Doctrine\ORM\EntityRepository
         ->setParameter('idPoste', $id_poste);
         return $query->getSingleResult();
     }
+
+    function findByIdRaidAndIdUser($id_raid, $id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT r FROM AppBundle:Repartition r
+            INNER JOIN AppBundle:Benevole b WITH b.id = r.idBenevole
+            INNER JOIN AppBundle:User u WITH u.id = b.idUser
+            INNER JOIN AppBundle:Raid raid WITH raid.id = b.idRaid
+            WHERE raid.id = :idRaid AND u.id= :idUser'
+        )
+        ->setParameter('idRaid', $id_raid)
+        ->setParameter('idUser', $id_user);
+        return $query->getResult();
+    }
 }
