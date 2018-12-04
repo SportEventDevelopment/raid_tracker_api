@@ -74,9 +74,7 @@ class RepartitionRepository extends \Doctrine\ORM\EntityRepository
         $query = $this->getEntityManager()->createQuery(
             'SELECT r FROM AppBundle:Repartition r
             INNER JOIN AppBundle:Benevole b WITH b.id = r.idBenevole
-            INNER JOIN AppBundle:User u WITH u.id = b.idUser
-            INNER JOIN AppBundle:Raid raid WITH raid.id = b.idRaid
-            WHERE raid.id = :idRaid AND u.id= :idUser'
+            WHERE b.idRaid = :idRaid AND b.idUser= :idUser'
         )
         ->setParameter('idRaid', $id_raid)
         ->setParameter('idUser', $id_user);
