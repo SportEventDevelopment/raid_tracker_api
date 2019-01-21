@@ -205,9 +205,7 @@ class RaidController extends Controller
     {
         $raids = $this->getDoctrine()->getManager()
                 ->getRepository('AppBundle:Raid')
-                ->findBy(array(
-                    'visibility' => true
-                ));
+                ->findRaidsByVisibility();
 
         /* @var $raids Raids[] */
         if(empty($raids)){
@@ -234,9 +232,7 @@ class RaidController extends Controller
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $raids = $em->getRepository('AppBundle:Raid')
-                    ->findBy(array(
-                        'visibility' => true
-                    ));
+                    ->findRaidsByVisibility();
 
         if($raids) {
             foreach ($raids as $raid) {
