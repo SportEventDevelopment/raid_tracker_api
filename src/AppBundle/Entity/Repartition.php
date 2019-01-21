@@ -37,6 +37,12 @@ class Repartition
      */
     private $idBenevole;
 
+    /**
+     * 
+     * @ORM\Column(name="estConfirme", type="boolean")
+     */
+    private $estConfirme;
+
 
     /**
      * Get id
@@ -94,6 +100,30 @@ class Repartition
     public function getIdBenevole()
     {
         return $this->idBenevole;
+    }
+
+    /**
+     * Set estConfirme
+     *
+     * @param boolean $estConfirme
+     *
+     * @return Repartition
+     */
+    public function setEstConfirme($estConfirme)
+    {
+        $this->estConfirme = $estConfirme;
+
+        return $this;
+    }
+
+    /**
+     * Get estConfirme
+     *
+     * @return boolean
+     */
+    public function getEstConfirme()
+    {
+        return $this->estConfirme;
     }
 }
 

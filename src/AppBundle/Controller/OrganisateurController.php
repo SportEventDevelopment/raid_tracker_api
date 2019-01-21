@@ -193,6 +193,22 @@ class OrganisateurController extends Controller
      */
     public function getOrganisateurByRaidIdAndByUserId(Request $request)
     {
+        $raid = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Raid')
+                ->find($request->get('id_raid'));
+        
+        if(empty($raid)){
+            return new JsonResponse(['message' => "Le raid selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+ 
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
+                ->find($request->get('id_user'));
+        
+        if(empty($user)){
+            return new JsonResponse(['message' => "L'utilisateur selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+
         $organisateur = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Organisateur')
                 ->findOneBy(array(  
@@ -273,6 +289,22 @@ class OrganisateurController extends Controller
      */
     public function deleteOrganisateurByIdRaidAndByIdUser(Request $request)
     {
+        $raid = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Raid')
+                ->find($request->get('id_raid'));
+        
+        if(empty($raid)){
+            return new JsonResponse(['message' => "Le raid selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+ 
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
+                ->find($request->get('id_user'));
+        
+        if(empty($user)){
+            return new JsonResponse(['message' => "L'utilisateur selectionné n'existe pas !"], Response::HTTP_NOT_FOUND);
+        }
+        
         $em = $this->get('doctrine.orm.entity_manager');
         $organisateur = $this->getDoctrine()->getRepository('AppBundle:Organisateur')
                         ->findOneBy(array(
