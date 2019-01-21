@@ -206,6 +206,72 @@ class PointController extends Controller
     /**
      * @Doc\ApiDoc(
      *     section="POINT",
+     *     description="Get all points of one parcours",
+     *     statusCodes={
+     *         200="Returned when points are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no points are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/points/parcours/{id_parcours}", name="get_point_one_parcours")
+     */
+    public function getPointsByIdParcours(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $parcours = $em->getRepository('AppBundle:Parcours')
+                    ->find($request->get('id_parcours'));
+
+        if(empty($parcours)){
+            return new JsonResponse(["message" => "Ce parcours n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $points = $em->getRepository('AppBundle:Point')
+                    ->findPointsByIdParcours($request->get('id_parcours'));
+
+        if(empty($points)){
+            return new JsonResponse(["message" => "Aucun points dans ce parcours"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $points;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="POINT",
+     *     description="Delete all points of a specific parcours",
+     *     statusCodes={
+     *         202="Remove all points successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/points/parcours/{id_parcours}", name="delete_point_one_parcours")
+     */
+    public function deletePointsByIdParcours(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $parcours = $em->getRepository('AppBundle:Parcours')
+                    ->find($request->get('id_parcours'));
+
+        if(empty($parcours)){
+            return new JsonResponse(["message" => "Ce parcours n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $points = $em->getRepository('AppBundle:Point')
+                    ->findPointsByIdParcours($request->get('id_parcours'));
+
+        if($points){
+            foreach($points as $point){
+                $em->remove($point);
+            }
+            $em->flush();
+        }
+    }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POINT",
      *     description="Get all points of one trace",
      *     statusCodes={
      *         200="Returned when points are found",
