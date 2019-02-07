@@ -26,8 +26,7 @@ class PointRepository extends \Doctrine\ORM\EntityRepository
             INNER JOIN AppBundle:Trace t WITH point.idTrace = t.id
             INNER JOIN AppBundle:Parcours p WITH t.idParcours = p.id 
             WHERE p.id = :idParcours
-            ORDER BY point.ordre ASC
-            GROUP BY t.id'
+            ORDER BY t.id, point.ordre ASC'
         )->setParameter('idParcours', $id_parcours);
         
         return $query->getResult();        
