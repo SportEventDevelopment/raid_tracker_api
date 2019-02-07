@@ -37,6 +37,12 @@ class PrefPoste
      */
     private $idPoste;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="priority", type="integer")
+     */
+    private $priority;
 
     /**
      * Get id
@@ -95,5 +101,30 @@ class PrefPoste
     {
         return $this->idPoste;
     }
+
+    /**
+     * Set priority
+     *
+     * @param integer $priority
+     *
+     * @return PrefPoste
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    /**
+     * Get priority
+     *
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
 }
 

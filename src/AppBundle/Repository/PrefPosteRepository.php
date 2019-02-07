@@ -14,7 +14,8 @@ class PrefPosteRepository extends \Doctrine\ORM\EntityRepository
         $query = $this->getEntityManager()->createQuery(
             'SELECT p FROM AppBundle:PrefPoste p
             INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
-            WHERE b.idRaid = :idRaid'
+            WHERE b.idRaid = :idRaid
+            ORDER BY b.id AND p.priority ASC'
         )->setParameter('idRaid', $id_raid);
         return $query->getResult();
     }
@@ -23,9 +24,21 @@ class PrefPosteRepository extends \Doctrine\ORM\EntityRepository
         $query = $this->getEntityManager()->createQuery(
             'SELECT p FROM AppBundle:PrefPoste p
             INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
-            WHERE b.idRaid = :idRaid AND b.idUser = :idUser'
+            WHERE b.idRaid = :idRaid AND b.idUser = :idUser
+            ORDER BY b.id AND p.priority ASC'
         )->setParameter('idRaid', $id_raid)
         ->setParameter('idUser', $id_user);
         return $query->getResult();
-}
+    }
+
+    function findByIdPosteIdUser($id_poste, $id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT p FROM AppBundle:PrefPoste p
+            INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
+            WHERE p.idPoste = :idPoste AND b.idUser = :idUser
+            ORDER BY b.id AND p.priority ASC'
+        )->setParameter('idPoste', $id_poste)
+        ->setParameter('idUser', $id_user);
+        return $query->getResult();
+    }
 }

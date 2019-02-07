@@ -15,7 +15,8 @@ class PrefPosteType extends AbstractType
     {
         $builder
             ->add('idPoste')
-            ->add('idBenevole');
+            ->add('idBenevole')
+            ->add('priority');
     }
     
     /**
