@@ -18,4 +18,14 @@ class PrefPosteRepository extends \Doctrine\ORM\EntityRepository
         )->setParameter('idRaid', $id_raid);
         return $query->getResult();
     }
+
+    function findByIdRaidIdUser($id_raid, $id_user){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT p FROM AppBundle:PrefPoste p
+            INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
+            WHERE b.idRaid = :idRaid AND b.idUser = :idUser'
+        )->setParameter('idRaid', $id_raid)
+        ->setParameter('idUser', $id_user);
+        return $query->getResult();
+}
 }
