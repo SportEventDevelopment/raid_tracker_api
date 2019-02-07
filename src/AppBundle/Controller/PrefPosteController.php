@@ -376,10 +376,7 @@ class PrefPosteController extends Controller
 
         $prefpostes = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:PrefPoste')
-                ->findBy(array(
-                    "idRaid" => $request->get('id_raid'),
-                    "idUser" => $request->get('id_user')
-                ));
+                ->findByIdRaidIdUser($request->get('id_raid'),$request->get('id_user'));
 
         if (empty($prefpostes)) {
             return new JsonResponse(['message' => "L'utilisateur n'a pas encore de préférences de poste !"], Response::HTTP_NOT_FOUND);
@@ -420,10 +417,7 @@ class PrefPosteController extends Controller
 
         $em = $this->get('doctrine.orm.entity_manager');
         $prefpostes = $em->getRepository('AppBundle:PrefPoste')
-                    ->findBy(array(
-                        "idRaid" => $request->get('id_raid'),
-                        "idUser" => $request->get('id_user')
-                    ));
+                    ->findByIdRaidIdUser($request->get('id_raid'), $request->get('id_user'));
 
         if ($prefpostes) {
             foreach ($prefpostes as $prefposte) {
