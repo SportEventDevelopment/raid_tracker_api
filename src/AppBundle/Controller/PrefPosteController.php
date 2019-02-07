@@ -341,4 +341,95 @@ class PrefPosteController extends Controller
             $em->flush();
         }
     }
+
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="PREFPOSTE",
+     *     description="Get PREFPOSTE by id_raid and id_user",
+     *     statusCodes={
+     *         200="Returned when prefpostes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no prefposte is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/prefpostes/raids/{id_raid}/users/{id_user}", name="get_all_prefpostes_by_idraid_iduser")
+     */
+    public function getPrefPostesByIdRaidAndIdUser(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $raid = $em->getRepository('AppBundle:Raid')
+            ->find($request->get('id_raid'));
+
+        if(empty($raid)){
+            return new JsonResponse(["message" => "Ce raid n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $em = $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+            ->find($request->get('id_user'));
+
+        if(empty($user)){
+            return new JsonResponse(["message" => "Cet utilisateur n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $prefpostes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:PrefPoste')
+                ->findBy(array(
+                    "idRaid" => $request->get('id_raid'),
+                    "idUser" => $request->get('id_user')
+                ));
+
+        if (empty($prefpostes)) {
+            return new JsonResponse(['message' => "L'utilisateur n'a pas encore de préférences de poste !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $prefpostes;
+    }
+
+    /**
+     *  @Doc\ApiDoc(
+     *     section="PREFPOSTE",
+     *     description="Delete all prefpostes by idraid and iduser",
+     *     statusCodes={
+     *         202="Remove all prefpostes successfully",
+     *         400="Bad request",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/prefpostes/raids/{id_raid}/users/{id_user}", name="delete_all_prefpostes_by_idraid_iduser")
+     */
+    public function deletePrefPostesByIdRaidAndIdUser(Request $request)
+    {         
+        $em = $this->get('doctrine.orm.entity_manager');
+        $raid = $em->getRepository('AppBundle:Raid')
+            ->find($request->get('id_raid'));
+
+        if(empty($raid)){
+            return new JsonResponse(["message" => "Ce raid n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $em = $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+            ->find($request->get('id_user'));
+
+        if(empty($user)){
+            return new JsonResponse(["message" => "Cet utilisateur n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $em = $this->get('doctrine.orm.entity_manager');
+        $prefpostes = $em->getRepository('AppBundle:PrefPoste')
+                    ->findBy(array(
+                        "idRaid" => $request->get('id_raid'),
+                        "idUser" => $request->get('id_user')
+                    ));
+
+        if ($prefpostes) {
+            foreach ($prefpostes as $prefposte) {
+                $em->remove($prefposte);
+            }
+            $em->flush();
+        }
+    }
 }
