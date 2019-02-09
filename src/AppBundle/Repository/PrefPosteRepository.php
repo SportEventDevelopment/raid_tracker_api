@@ -44,7 +44,7 @@ class PrefPosteRepository extends \Doctrine\ORM\EntityRepository
 
     function findCountByIdRaidIdUser($id_raid, $id_user){
         $query = $this->getEntityManager()->createQuery(
-            'SELECT COUNT(p.id) FROM AppBundle:PrefPoste p
+            'SELECT COUNT(p.id) as nb_preferences FROM AppBundle:PrefPoste p
             INNER JOIN AppBundle:Benevole b WITH b.id = p.idBenevole
             WHERE b.idRaid = :idRaid AND b.idUser = :idUser
             ORDER BY b.id, p.priority ASC'
