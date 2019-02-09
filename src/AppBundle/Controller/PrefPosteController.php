@@ -511,4 +511,42 @@ class PrefPosteController extends Controller
             $em->flush();
         }
     }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="PREFPOSTE",
+     *     description="Get number of PREFPOSTE by id_raid and id_user",
+     *     statusCodes={
+     *         200="Returned when prefpostes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no prefposte is present in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/prefpostes/raids/{id_raid}/users/{id_user}/count", name="get_nb_prefpostes_by_idraid_iduser")
+     */
+    public function getNbPrefPostesByIdRaidAndIdUser(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $raid = $em->getRepository('AppBundle:Raid')
+            ->find($request->get('id_raid'));
+
+        if(empty($raid)){
+            return new JsonResponse(["message" => "Ce raid n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $em = $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+            ->find($request->get('id_user'));
+
+        if(empty($user)){
+            return new JsonResponse(["message" => "Cet utilisateur n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $prefpostes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:PrefPoste')
+                ->findCountByIdRaidIdUser($request->get('id_raid'),$request->get('id_user'));
+
+        return $prefpostes;
+    }
 }
