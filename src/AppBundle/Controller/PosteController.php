@@ -462,4 +462,73 @@ class PosteController extends Controller
             $em->flush();
         }
     }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get one poste by id_point",
+     *     statusCodes={
+     *         200="Returned when poste is found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/points/{id_point}", name="get_poste_idpoint")
+     */
+    public function getPosteByIdPoint(Request $request)
+    {
+        $em =  $this->get('doctrine.orm.entity_manager');
+        $point = $em->getRepository('AppBundle:Point')
+                    ->find($request->get('id_point'));
+
+        if(empty($point)){
+            return new JsonResponse(["message" => "point ". $request->get('id_point') ." non trouvé !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        $poste = $em->getRepository('AppBundle:Poste')
+                    ->findOneBy(array(
+                        "idPoint" => $request->get('id_point')
+                    ));
+
+        if(empty($poste)){
+            return new JsonResponse(["message" => "poste non trouvé !"], Response::HTTP_NOT_FOUND);
+        }
+
+        return $poste;
+    }
+
+    
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete poste by idpoint",
+     *     statusCodes={
+     *         202="Returned when poste is found",
+     *         401="Unauthorized, you need to use auth-token"
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/points/{id_point}", name="delete_poste_idpoint")
+     */
+    public function deletePosteByIdPoint(Request $request)
+    {
+        $em =  $this->get('doctrine.orm.entity_manager');
+        $point = $em->getRepository('AppBundle:Point')
+                    ->find($request->get('id_point'));
+
+        if(empty($point)){
+            return new JsonResponse(["message" => "point ". $request->get('id_point') ." non trouvé !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        $poste = $em->getRepository('AppBundle:Poste')
+                    ->findOneBy(array(
+                        "idPoint" => $request->get('id_point')
+                    ));
+
+        if($poste){
+            $em->remove($poste);
+            $em->flush();
+        }
+    }
 }
