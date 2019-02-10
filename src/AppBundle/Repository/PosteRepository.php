@@ -101,4 +101,14 @@ class PosteRepository extends \Doctrine\ORM\EntityRepository
         
         return $query->getResult();
     }
+
+    function findPostesByIdTrace($id_trace){
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT poste FROM AppBundle:Poste poste
+            INNER JOIN AppBundle:Point point WITH poste.idPoint = point.id
+            WHERE point.idTrace = :idTrace'
+        )->setParameter('idTrace', $id_trace);
+        
+        return $query->getResult();
+    }
 }
