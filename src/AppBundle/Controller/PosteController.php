@@ -531,4 +531,73 @@ class PosteController extends Controller
             $em->flush();
         }
     }
+
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Get all postes by id_trace",
+     *     statusCodes={
+     *         200="Returned when postes are found",
+     *         401="Unauthorized, you need to use auth-token",
+     *         404="Returned when no postes are presents in the database"
+     *     }
+     * )
+     * @Rest\View()
+     * @Rest\Get("/api/postes/traces/{id_trace}", name="get_all_poste_idtrace")
+     */
+    public function getPostesByIdtrace(Request $request)
+    {
+        $trace = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Trace')
+                ->find($request->get('id_trace'));
+
+        if(empty($trace)){
+            return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findPostesByIdTrace($request->get('id_trace'));
+        
+        if(empty($postes)){
+            return new JsonResponse(["message" => "Aucun poste présent dans la BDD !"], Response::HTTP_NOT_FOUND);
+        }
+        
+        return $postes;
+    }
+
+    
+    /**
+     * @Doc\ApiDoc(
+     *     section="POSTE",
+     *     description="Delete all postes by id_trace",
+     *     statusCodes={
+     *         202="All postes have been removed",
+     *         401="Unauthorized, you need to use auth-token",
+     *     }
+     * )
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/api/postes/traces/{id_trace}", name="delete_all_poste_idtrace")
+     */
+    public function deletePostesByIdTrace(Request $request)
+    {
+        $trace = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Trace')
+                ->find($request->get('id_trace'));
+
+        if(empty($trace)){
+            return new JsonResponse(["message" => "Ce tracé n'existe pas"], Response::HTTP_NOT_FOUND);
+        }
+
+        $postes = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Poste')
+                ->findPostesByIdTrace($request->get('id_trace'));
+
+        if($postes) {
+            foreach ($postes as $poste) {
+                $em->remove($poste);
+            }
+            $em->flush();
+        }
+    }
 }
